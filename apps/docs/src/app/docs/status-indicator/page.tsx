@@ -20,7 +20,7 @@ export default function StatusIndicatorDocs() {
       <StatusIndicatorCustomDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { StatusIndicator } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { StatusIndicator } from "@arc-lo/ui";`} />
 
       <h2>Basic usage</h2>
       <CodeBlock

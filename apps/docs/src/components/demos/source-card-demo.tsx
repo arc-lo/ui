@@ -1,9 +1,9 @@
 "use client";
 
-import { SourceCard } from "@arclo/react";
+import { SourceCard } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
-const fullCode = `import { SourceCard } from "@arclo/react";
+const fullCode = `import { SourceCard } from "@arc-lo/ui";
 
 <SourceCard
   title="React Server Components"

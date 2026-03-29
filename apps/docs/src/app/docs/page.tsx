@@ -12,7 +12,7 @@ export default function DocsIndex() {
       </p>
 
       <h2>Installation</h2>
-      <CodeBlock lang="bash" code={`npm install @arclo/react`} />
+      <CodeBlock lang="bash" code={`npm install @arc-lo/ui`} />
 
       <h3>Peer dependencies</h3>
       <p>arclo requires React 18+ and Tailwind CSS 4+.</p>
@@ -26,7 +26,7 @@ export default function DocsIndex() {
   FeedbackBar,
   ThinkingBlock,
   StatusIndicator,
-} from "@arclo/react";
+} from "@arc-lo/ui";
 
 function ChatMessage({ stream, thinkingState }) {
   return (
@@ -97,7 +97,7 @@ function ChatMessage({ stream, thinkingState }) {
       <CodeBlock
         lang="css"
         code={`/* Option 1: Import the preset (includes light + dark mode) */
-@import "@arclo/react/theme.css";
+@import "@arc-lo/ui/theme.css";
 
 /* Option 2: Set variables manually */
 :root {

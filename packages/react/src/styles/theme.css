@@ -1,5 +1,5 @@
 /* arclo theme — import this file for automatic light/dark mode support */
-/* Usage: @import "@arclo/react/styles/theme.css"; */
+/* Usage: @import "@arc-lo/ui/styles/theme.css"; */
 
 :root {
   --arclo-accent: #6C5CE7;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileAttachment } from "@arclo/react";
+import { FileAttachment } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const chipCode = `<div className="flex flex-wrap gap-2">

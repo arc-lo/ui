@@ -14,7 +14,7 @@ export default function CitationInlineDocs() {
       <CitationInlineDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { CitationInline, CitationGroup } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { CitationInline, CitationGroup } from "@arc-lo/ui";`} />
 
       <h2>Variants</h2>
       <CodeBlock

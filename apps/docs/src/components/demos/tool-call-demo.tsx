@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { ToolCall } from "@arclo/react";
-import type { ToolCallStatus } from "@arclo/react";
+import { ToolCall } from "@arc-lo/ui";
+import type { ToolCallStatus } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const liveCode = `<ToolCall.Root toolName="web_search" status={status} defaultOpen>

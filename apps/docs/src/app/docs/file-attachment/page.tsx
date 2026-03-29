@@ -20,7 +20,7 @@ export default function FileAttachmentDocs() {
       <FileAttachmentProgressDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { FileAttachment } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { FileAttachment } from "@arc-lo/ui";`} />
 
       <h2>Chip variant (default)</h2>
       <CodeBlock

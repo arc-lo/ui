@@ -18,7 +18,7 @@ export default function StreamingTextDocs() {
       <StreamingTextStatesDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { StreamingText } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { StreamingText } from "@arc-lo/ui";`} />
 
       <h2>Basic usage</h2>
       <CodeBlock
@@ -78,7 +78,7 @@ export default function StreamingTextDocs() {
       <h2>Using the hook directly</h2>
       <CodeBlock
         lang="tsx"
-        code={`import { useStreamingText } from "@arclo/react";
+        code={`import { useStreamingText } from "@arc-lo/ui";
 
 function CustomStreaming({ stream }) {
   const { displayedText, state, interrupt, skipAnimation } =

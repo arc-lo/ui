@@ -1,9 +1,9 @@
 "use client";
 
-import { CodeBlock } from "@arclo/react";
+import { CodeBlock } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
-const basicCode = `import { CodeBlock } from "@arclo/react";
+const basicCode = `import { CodeBlock } from "@arc-lo/ui";
 
 const code = \`import { useState, useEffect } from "react";
 
@@ -31,7 +31,7 @@ export function useUser(id: string) {
 
 <CodeBlock language="typescript" code={code} />`;
 
-const lineNumbersCode = `import { CodeBlock } from "@arclo/react";
+const lineNumbersCode = `import { CodeBlock } from "@arc-lo/ui";
 
 const code = \`def fibonacci(n):
     if n <= 1:

@@ -16,7 +16,7 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@arclo/react": ["packages/react/src"]
+      "@arc-lo/ui": ["packages/react/src"]
     }
   },
   "references": [

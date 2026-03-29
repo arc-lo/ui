@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ModelSelector } from "@arclo/react";
+import { ModelSelector } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
-const code = `import { ModelSelector } from "@arclo/react";
+const code = `import { ModelSelector } from "@arc-lo/ui";
 
 const models = [
   { id: "claude-4", name: "Claude 4 Opus", badge: "New", description: "Most capable model for complex tasks" },

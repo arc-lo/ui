@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Scan @arclo/react source so Tailwind includes its color classes */
+/* Scan @arc-lo/ui source so Tailwind includes its color classes */
 @source "../../../../packages/react/src";
 
 /* ─── Light theme (default) ───────────────────────────────────────── */

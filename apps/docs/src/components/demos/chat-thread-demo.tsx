@@ -7,7 +7,7 @@ import {
   ThinkingBlock,
   ToolCall,
   FeedbackBar,
-} from "@arclo/react";
+} from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const assistantResponse =

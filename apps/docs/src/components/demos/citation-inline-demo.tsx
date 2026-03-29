@@ -1,9 +1,9 @@
 "use client";
 
-import { CitationInline, CitationGroup } from "@arclo/react";
+import { CitationInline, CitationGroup } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
-const code = `import { CitationInline, CitationGroup } from "@arclo/react";
+const code = `import { CitationInline, CitationGroup } from "@arc-lo/ui";
 
 {/* Superscript (default) */}
 <CitationInline

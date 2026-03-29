@@ -151,7 +151,7 @@ export default function Home() {
                 color: "var(--docs-body)",
               }}
             >
-              npm i @arclo/react
+              npm i @arc-lo/ui
             </code>
           </div>
         </div>

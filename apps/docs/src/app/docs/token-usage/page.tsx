@@ -15,7 +15,7 @@ export default function TokenUsageDocs() {
       <TokenUsageDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { TokenUsage } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { TokenUsage } from "@arc-lo/ui";`} />
 
       <h2>Basic usage</h2>
       <CodeBlock

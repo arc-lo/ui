@@ -1,9 +1,9 @@
 "use client";
 
-import { ConfidenceBadge } from "@arclo/react";
+import { ConfidenceBadge } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
-const code = `import { ConfidenceBadge } from "@arclo/react";
+const code = `import { ConfidenceBadge } from "@arc-lo/ui";
 
 {/* Badge variant */}
 <ConfidenceBadge level="high" />

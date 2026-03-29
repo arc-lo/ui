@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PromptBox } from "@arclo/react";
+import { PromptBox } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const basicCode = `<PromptBox.Root onSubmit={(value) => sendToAI(value)} isSubmitting={loading}>

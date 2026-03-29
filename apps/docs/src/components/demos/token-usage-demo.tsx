@@ -1,9 +1,9 @@
 "use client";
 
-import { TokenUsage } from "@arclo/react";
+import { TokenUsage } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
-const code = `import { TokenUsage } from "@arclo/react";
+const code = `import { TokenUsage } from "@arc-lo/ui";
 
 {/* Low usage */}
 <TokenUsage

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FeedbackBar } from "@arclo/react";
+import { FeedbackBar } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const fullCode = `<FeedbackBar.Root onFeedback={(value) => trackFeedback(value)}>

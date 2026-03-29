@@ -18,7 +18,7 @@ export default function RefusalCardDocs() {
       <RefusalCardCustomDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { RefusalCard } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { RefusalCard } from "@arc-lo/ui";`} />
 
       <h2>Basic usage</h2>
       <CodeBlock

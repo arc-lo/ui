@@ -7,7 +7,7 @@ Built on Radix conventions. Works with shadcn/ui. TypeScript + Tailwind CSS.
 ## Install
 
 ```
-npm install @arclo/react
+npm install @arc-lo/ui
 ```
 
 Peer dependencies: react >=18, react-dom >=18, tailwindcss >=4
@@ -19,7 +19,7 @@ Peer dependencies: react >=18, react-dom >=18, tailwindcss >=4
 Token-by-token text rendering with 6 lifecycle states.
 
 ```tsx
-import { StreamingText } from "@arclo/react";
+import { StreamingText } from "@arc-lo/ui";
 
 <StreamingText.Root stream={readableStream} speed={30} chunkSize="char">
   <StreamingText.Skeleton lines={3} />
@@ -52,7 +52,7 @@ Custom rendering: `<StreamingText.Content render={(text) => <Markdown>{text}</Ma
 AI prompt input with auto-growing textarea, context chips, and suggestions.
 
 ```tsx
-import { PromptBox } from "@arclo/react";
+import { PromptBox } from "@arc-lo/ui";
 
 <PromptBox.Root onSubmit={(value) => sendToAI(value)} isSubmitting={loading}>
   <PromptBox.Chips>
@@ -84,7 +84,7 @@ Enter submits. Shift+Enter adds newline. Textarea auto-grows from minRows to max
 Visual indicator for AI confidence levels.
 
 ```tsx
-import { ConfidenceBadge } from "@arclo/react";
+import { ConfidenceBadge } from "@arc-lo/ui";
 
 <ConfidenceBadge level="high" />           // green badge
 <ConfidenceBadge level="medium" />         // amber badge
@@ -105,7 +105,7 @@ Props:
 Response action toolbar — thumbs, copy, regenerate.
 
 ```tsx
-import { FeedbackBar } from "@arclo/react";
+import { FeedbackBar } from "@arc-lo/ui";
 
 <FeedbackBar.Root onFeedback={(value) => track(value)}>
   <FeedbackBar.ThumbsUp />
@@ -125,7 +125,7 @@ Feedback toggles — clicking active thumb deselects. Copy shows checkmark for 2
 Inline source attribution with hover preview.
 
 ```tsx
-import { CitationInline, CitationGroup } from "@arclo/react";
+import { CitationInline, CitationGroup } from "@arc-lo/ui";
 
 // Superscript (default)
 <CitationInline index={1} href="https://example.com" sourceTitle="Source" preview="Preview text..." />
@@ -155,7 +155,7 @@ Props:
 Graceful declined request handling with alternatives.
 
 ```tsx
-import { RefusalCard } from "@arclo/react";
+import { RefusalCard } from "@arc-lo/ui";
 
 <RefusalCard
   type="safety"
@@ -189,4 +189,4 @@ All compound components follow Radix patterns:
 
 - Docs: https://arclo.dev/docs
 - GitHub: https://github.com/metaleap/arclo
-- npm: https://www.npmjs.com/package/@arclo/react
+- npm: https://www.npmjs.com/package/@arc-lo/ui

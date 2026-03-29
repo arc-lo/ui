@@ -15,7 +15,7 @@ export default function ConfidenceBadgeDocs() {
       <ConfidenceBadgeDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { ConfidenceBadge } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { ConfidenceBadge } from "@arc-lo/ui";`} />
 
       <h2>Variants</h2>
       <CodeBlock

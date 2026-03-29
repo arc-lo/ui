@@ -19,7 +19,7 @@ export default function ConversationBranchDocs() {
       <ConversationBranchBoundaryDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { ConversationBranch } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { ConversationBranch } from "@arc-lo/ui";`} />
 
       <h2>Basic usage</h2>
       <CodeBlock

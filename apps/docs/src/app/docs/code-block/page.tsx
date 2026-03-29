@@ -21,7 +21,7 @@ export default function CodeBlockDocs() {
       <CodeBlockScrollDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { CodeBlock } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { CodeBlock } from "@arc-lo/ui";`} />
 
       <h2>Basic usage</h2>
       <CodeBlock

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ConversationBranch } from "@arclo/react";
+import { ConversationBranch } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const basicCode = `<ConversationBranch

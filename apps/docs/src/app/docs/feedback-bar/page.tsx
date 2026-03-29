@@ -18,7 +18,7 @@ export default function FeedbackBarDocs() {
       <FeedbackBarMinimalDemo />
 
       <h2>Import</h2>
-      <CodeBlock lang="tsx" code={`import { FeedbackBar } from "@arclo/react";`} />
+      <CodeBlock lang="tsx" code={`import { FeedbackBar } from "@arc-lo/ui";`} />
 
       <h2>Basic usage</h2>
       <CodeBlock

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { MarkdownRenderer } from "@arclo/react";
+import { MarkdownRenderer } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
-const usageCode = `import { MarkdownRenderer } from "@arclo/react";
+const usageCode = `import { MarkdownRenderer } from "@arc-lo/ui";
 
 // Basic
 <MarkdownRenderer content={markdownString} />
@@ -31,7 +31,7 @@ Here are the core ideas:
 ## Code Example
 
 \`\`\`typescript
-import { StreamingText } from "@arclo/react";
+import { StreamingText } from "@arc-lo/ui";
 
 function ChatMessage({ stream }) {
   return (

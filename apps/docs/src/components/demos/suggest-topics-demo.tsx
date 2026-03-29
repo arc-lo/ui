@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { SuggestTopics, TopicCard } from "@arclo/react";
+import { SuggestTopics, TopicCard } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
-const code = `import { SuggestTopics, TopicCard } from "@arclo/react";
+const code = `import { SuggestTopics, TopicCard } from "@arc-lo/ui";
 
 <SuggestTopics columns={2}>
   <TopicCard

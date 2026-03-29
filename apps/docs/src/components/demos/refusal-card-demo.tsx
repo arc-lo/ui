@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RefusalCard } from "@arclo/react";
+import { RefusalCard } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const allTypesCode = `<RefusalCard

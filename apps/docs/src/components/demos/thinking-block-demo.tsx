@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ThinkingBlock } from "@arclo/react";
+import { ThinkingBlock } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const liveCode = `<ThinkingBlock.Root state={state} duration={duration} collapseOnDone>

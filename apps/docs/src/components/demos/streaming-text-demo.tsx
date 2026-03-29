@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { StreamingText, FeedbackBar } from "@arclo/react";
+import { StreamingText, FeedbackBar } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const sampleTexts = [

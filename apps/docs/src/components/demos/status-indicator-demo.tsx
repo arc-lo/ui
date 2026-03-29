@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { StatusIndicator } from "@arclo/react";
-import type { StatusIndicatorState } from "@arclo/react";
+import { StatusIndicator } from "@arc-lo/ui";
+import type { StatusIndicatorState } from "@arc-lo/ui";
 import { DemoWrapper } from "../demo-wrapper";
 
 const allStatesCode = `<StatusIndicator state="idle" />
