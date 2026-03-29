@@ -1,0 +1,4 @@
+{
+  "installCommand": "cd ../.. && npm install && npm run build -w packages/react",
+  "framework": "nextjs"
+}
