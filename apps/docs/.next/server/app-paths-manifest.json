@@ -1,0 +1,7 @@
+{
+  "/docs/code-block/page": "app/docs/code-block/page.js",
+  "/docs/model-selector/page": "app/docs/model-selector/page.js",
+  "/docs/page": "app/docs/page.js",
+  "/docs/status-indicator/page": "app/docs/status-indicator/page.js",
+  "/docs/suggest-topics/page": "app/docs/suggest-topics/page.js"
+}

@@ -1,0 +1,192 @@
+# arclo
+
+> AI-native design system for React. 6 components that don't exist in MUI, Tailwind, Radix, or shadcn/ui.
+
+Built on Radix conventions. Works with shadcn/ui. TypeScript + Tailwind CSS.
+
+## Install
+
+```
+npm install @arclo/react
+```
+
+Peer dependencies: react >=18, react-dom >=18, tailwindcss >=4
+
+## Components
+
+### StreamingText
+
+Token-by-token text rendering with 6 lifecycle states.
+
+```tsx
+import { StreamingText } from "@arclo/react";
+
+<StreamingText.Root stream={readableStream} speed={30} chunkSize="char">
+  <StreamingText.Skeleton lines={3} />
+  <StreamingText.Content />
+  <StreamingText.Cursor char="▋" />
+  <StreamingText.Stop>Stop generating</StreamingText.Stop>
+  <StreamingText.ErrorFallback message="Something went wrong." onRetry={retry} />
+  <StreamingText.RateLimit message="Rate limit reached." retryAfter={30} />
+  <StreamingText.Toolbar>{/* buttons here */}</StreamingText.Toolbar>
+</StreamingText.Root>
+```
+
+States: pending, streaming, done, interrupted, error, ratelimit.
+
+Root props:
+- stream: ReadableStream<string> — stream of text chunks
+- text: string — plain text alternative (animates in)
+- speed: number (default 30) — ms between chunks
+- chunkSize: "char" | "word" | "line" (default "char")
+- onDone: (text: string) => void
+- onError: (error: Error) => void
+- onInterrupt: (partialText: string) => void
+
+Hook: `useStreamingText({ stream, text, speed, chunkSize, onDone, onError, onInterrupt })` returns `{ displayedText, fullText, state, interrupt, reset, skipAnimation }`.
+
+Custom rendering: `<StreamingText.Content render={(text) => <Markdown>{text}</Markdown>} />`
+
+### PromptBox
+
+AI prompt input with auto-growing textarea, context chips, and suggestions.
+
+```tsx
+import { PromptBox } from "@arclo/react";
+
+<PromptBox.Root onSubmit={(value) => sendToAI(value)} isSubmitting={loading}>
+  <PromptBox.Chips>
+    <PromptBox.Chip onRemove={() => remove()}>GPT-4</PromptBox.Chip>
+  </PromptBox.Chips>
+  <PromptBox.Input placeholder="Ask anything..." minRows={1} maxRows={8} />
+  <PromptBox.Suggestions
+    suggestions={["Summarize this", "What are the risks?"]}
+    onSelect={(s) => console.log(s)}
+  />
+  <PromptBox.Footer>
+    <PromptBox.SubmitButton />
+  </PromptBox.Footer>
+</PromptBox.Root>
+```
+
+Root props:
+- value: string (controlled)
+- defaultValue: string
+- onSubmit: (value: string) => void
+- onValueChange: (value: string) => void
+- isSubmitting: boolean
+- disabled: boolean
+
+Enter submits. Shift+Enter adds newline. Textarea auto-grows from minRows to maxRows.
+
+### ConfidenceBadge
+
+Visual indicator for AI confidence levels.
+
+```tsx
+import { ConfidenceBadge } from "@arclo/react";
+
+<ConfidenceBadge level="high" />           // green badge
+<ConfidenceBadge level="medium" />         // amber badge
+<ConfidenceBadge level="low" />            // red badge
+<ConfidenceBadge level="unknown" />        // gray badge
+<ConfidenceBadge level="high" variant="dot" />     // small dot
+<ConfidenceBadge level="low" variant="inline" />   // italic text
+<ConfidenceBadge level="high" label="Verified" />  // custom label
+```
+
+Props:
+- level: "high" | "medium" | "low" | "unknown" (required)
+- variant: "badge" | "dot" | "inline" (default "badge")
+- label: string (overrides default label)
+
+### FeedbackBar
+
+Response action toolbar — thumbs, copy, regenerate.
+
+```tsx
+import { FeedbackBar } from "@arclo/react";
+
+<FeedbackBar.Root onFeedback={(value) => track(value)}>
+  <FeedbackBar.ThumbsUp />
+  <FeedbackBar.ThumbsDown />
+  <FeedbackBar.Copy text={responseText} />
+  <FeedbackBar.Regenerate onRegenerate={() => regen()} />
+</FeedbackBar.Root>
+```
+
+Root props:
+- onFeedback: (value: "up" | "down" | null) => void
+
+Feedback toggles — clicking active thumb deselects. Copy shows checkmark for 2s.
+
+### CitationInline
+
+Inline source attribution with hover preview.
+
+```tsx
+import { CitationInline, CitationGroup } from "@arclo/react";
+
+// Superscript (default)
+<CitationInline index={1} href="https://example.com" sourceTitle="Source" preview="Preview text..." />
+
+// Bracket style
+<CitationInline index={2} variant="bracket" />
+
+// Pill style
+<CitationInline index={3} variant="pill" />
+
+// Group multiple citations
+<CitationGroup>
+  <CitationInline index={1} />
+  <CitationInline index={2} />
+</CitationGroup>
+```
+
+Props:
+- index: number (required)
+- href: string — link URL
+- sourceTitle: string — shown in preview tooltip
+- preview: ReactNode — hover preview content
+- variant: "superscript" | "bracket" | "pill" (default "superscript")
+
+### RefusalCard
+
+Graceful declined request handling with alternatives.
+
+```tsx
+import { RefusalCard } from "@arclo/react";
+
+<RefusalCard
+  type="safety"
+  reason="I can't help with that."
+  suggestions={["Try this instead", "Or ask about this"]}
+  onSuggestionClick={(s) => submitPrompt(s)}
+/>
+```
+
+Types: safety (red), capability (amber), policy (orange), context (blue).
+
+Props:
+- type: "safety" | "capability" | "policy" | "context" (default "capability")
+- reason: string (has default per type)
+- suggestions: string[]
+- onSuggestionClick: (suggestion: string) => void
+- icon: ReactNode (override default icon)
+
+Accepts children for custom content inside the card.
+
+## Architecture
+
+All compound components follow Radix patterns:
+- Root provides context via React Context
+- Child parts consume context and render conditionally based on state
+- All parts accept className for Tailwind customization
+- All parts forward refs
+- data-state attributes on Root for CSS targeting
+
+## Links
+
+- Docs: https://arclo.dev/docs
+- GitHub: https://github.com/metaleap/arclo
+- npm: https://www.npmjs.com/package/@arclo/react

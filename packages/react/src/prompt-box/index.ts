@@ -1,0 +1,17 @@
+export {
+  Root,
+  Chips,
+  Chip,
+  Input,
+  Footer,
+  SubmitButton,
+  Suggestions,
+  usePromptBoxContext,
+  type PromptBoxRootProps,
+  type PromptBoxChipsProps,
+  type PromptBoxChipProps,
+  type PromptBoxInputProps,
+  type PromptBoxFooterProps,
+  type PromptBoxSubmitProps,
+  type PromptBoxSuggestionsProps,
+} from "./prompt-box";
