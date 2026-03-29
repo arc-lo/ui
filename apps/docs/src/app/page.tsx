@@ -109,7 +109,7 @@ export default function Home() {
           <div className="flex items-center gap-6 text-sm" style={{ color: "var(--docs-muted)" }}>
             <Link href="/docs" className="hover:opacity-80">Docs</Link>
             <a
-              href="https://github.com/metaleap/arclo"
+              href="https://github.com/arc-lo/ui"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:opacity-80"

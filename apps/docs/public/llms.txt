@@ -188,5 +188,5 @@ All compound components follow Radix patterns:
 ## Links
 
 - Docs: https://arclo.dev/docs
-- GitHub: https://github.com/metaleap/arclo
+- GitHub: https://github.com/arc-lo/ui
 - npm: https://www.npmjs.com/package/@arc-lo/ui
