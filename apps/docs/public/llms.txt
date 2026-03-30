@@ -1,8 +1,8 @@
 # arclo
 
-> AI-native design system for React. 6 components that don't exist in MUI, Tailwind, Radix, or shadcn/ui.
+> AI-native design system for React. 20 components that don't exist in MUI, Tailwind, Radix, or shadcn/ui.
 
-Built on Radix conventions. Works with shadcn/ui. TypeScript + Tailwind CSS.
+Built on Radix conventions. Works with shadcn/ui. TypeScript + Tailwind CSS. 6 color themes. Light + dark mode.
 
 ## Install
 
@@ -11,6 +11,41 @@ npm install @arc-lo/ui
 ```
 
 Peer dependencies: react >=18, react-dom >=18, tailwindcss >=4
+
+## Setup
+
+```css
+@import "tailwindcss";
+@import "@arc-lo/ui/styles.css";
+```
+
+That's it — theme variables, dark mode, and Tailwind utility scanning are all included.
+
+## Theming
+
+6 built-in color themes: noir (default/black), violet, ocean, forest, sunset, rose.
+
+```html
+<html data-theme="violet">
+```
+
+Or override CSS variables directly:
+
+```css
+:root {
+  --arclo-accent: #6C5CE7;
+  --arclo-accent-hover: #5A4BD1;
+  --arclo-accent-fg: #ffffff;
+  --arclo-surface: #ffffff;
+  --arclo-surface-secondary: #f9fafb;
+  --arclo-border: #e5e7eb;
+  --arclo-text: #1a1a1a;
+  --arclo-text-secondary: #6b7280;
+  --arclo-text-muted: #9ca3af;
+}
+```
+
+Dark mode: add `.dark` class to html or use `prefers-color-scheme: dark` (automatic).
 
 ## Components
 
@@ -21,31 +56,25 @@ Token-by-token text rendering with 6 lifecycle states.
 ```tsx
 import { StreamingText } from "@arc-lo/ui";
 
-<StreamingText.Root stream={readableStream} speed={30} chunkSize="char">
+<StreamingText.Root text={text} speed={30} chunkSize="char">
   <StreamingText.Skeleton lines={3} />
   <StreamingText.Content />
-  <StreamingText.Cursor char="▋" />
-  <StreamingText.Stop>Stop generating</StreamingText.Stop>
-  <StreamingText.ErrorFallback message="Something went wrong." onRetry={retry} />
-  <StreamingText.RateLimit message="Rate limit reached." retryAfter={30} />
-  <StreamingText.Toolbar>{/* buttons here */}</StreamingText.Toolbar>
+  <StreamingText.Cursor />
+  <StreamingText.Stop />
+  <StreamingText.ErrorFallback message="Something went wrong." />
+  <StreamingText.Toolbar>{/* buttons */}</StreamingText.Toolbar>
 </StreamingText.Root>
 ```
 
 States: pending, streaming, done, interrupted, error, ratelimit.
 
 Root props:
-- stream: ReadableStream<string> — stream of text chunks
-- text: string — plain text alternative (animates in)
+- text: string — text to stream
 - speed: number (default 30) — ms between chunks
 - chunkSize: "char" | "word" | "line" (default "char")
-- onDone: (text: string) => void
-- onError: (error: Error) => void
-- onInterrupt: (partialText: string) => void
+- onDone: () => void
 
-Hook: `useStreamingText({ stream, text, speed, chunkSize, onDone, onError, onInterrupt })` returns `{ displayedText, fullText, state, interrupt, reset, skipAnimation }`.
-
-Custom rendering: `<StreamingText.Content render={(text) => <Markdown>{text}</Markdown>} />`
+Hook: `useStreamingText({ text, speed, chunkSize, onDone })` returns `{ displayedText, fullText, state, interrupt, reset }`.
 
 ### PromptBox
 
@@ -54,15 +83,12 @@ AI prompt input with auto-growing textarea, context chips, and suggestions.
 ```tsx
 import { PromptBox } from "@arc-lo/ui";
 
-<PromptBox.Root onSubmit={(value) => sendToAI(value)} isSubmitting={loading}>
+<PromptBox.Root onSubmit={(value) => send(value)} isSubmitting={loading}>
   <PromptBox.Chips>
     <PromptBox.Chip onRemove={() => remove()}>GPT-4</PromptBox.Chip>
   </PromptBox.Chips>
-  <PromptBox.Input placeholder="Ask anything..." minRows={1} maxRows={8} />
-  <PromptBox.Suggestions
-    suggestions={["Summarize this", "What are the risks?"]}
-    onSelect={(s) => console.log(s)}
-  />
+  <PromptBox.Input placeholder="Ask anything..." />
+  <PromptBox.Suggestions suggestions={["Summarize", "Explain"]} />
   <PromptBox.Footer>
     <PromptBox.SubmitButton />
   </PromptBox.Footer>
@@ -77,7 +103,7 @@ Root props:
 - isSubmitting: boolean
 - disabled: boolean
 
-Enter submits. Shift+Enter adds newline. Textarea auto-grows from minRows to maxRows.
+Enter submits. Shift+Enter adds newline. Textarea auto-grows.
 
 ### ConfidenceBadge
 
@@ -86,19 +112,15 @@ Visual indicator for AI confidence levels.
 ```tsx
 import { ConfidenceBadge } from "@arc-lo/ui";
 
-<ConfidenceBadge level="high" />           // green badge
-<ConfidenceBadge level="medium" />         // amber badge
-<ConfidenceBadge level="low" />            // red badge
-<ConfidenceBadge level="unknown" />        // gray badge
-<ConfidenceBadge level="high" variant="dot" />     // small dot
-<ConfidenceBadge level="low" variant="inline" />   // italic text
-<ConfidenceBadge level="high" label="Verified" />  // custom label
+<ConfidenceBadge level="high" />
+<ConfidenceBadge level="medium" variant="dot" />
+<ConfidenceBadge level="low" variant="inline" />
 ```
 
 Props:
 - level: "high" | "medium" | "low" | "unknown" (required)
 - variant: "badge" | "dot" | "inline" (default "badge")
-- label: string (overrides default label)
+- label: string (custom label override)
 
 ### FeedbackBar
 
@@ -118,8 +140,6 @@ import { FeedbackBar } from "@arc-lo/ui";
 Root props:
 - onFeedback: (value: "up" | "down" | null) => void
 
-Feedback toggles — clicking active thumb deselects. Copy shows checkmark for 2s.
-
 ### CitationInline
 
 Inline source attribution with hover preview.
@@ -127,16 +147,10 @@ Inline source attribution with hover preview.
 ```tsx
 import { CitationInline, CitationGroup } from "@arc-lo/ui";
 
-// Superscript (default)
 <CitationInline index={1} href="https://example.com" sourceTitle="Source" preview="Preview text..." />
-
-// Bracket style
 <CitationInline index={2} variant="bracket" />
-
-// Pill style
 <CitationInline index={3} variant="pill" />
 
-// Group multiple citations
 <CitationGroup>
   <CitationInline index={1} />
   <CitationInline index={2} />
@@ -145,9 +159,9 @@ import { CitationInline, CitationGroup } from "@arc-lo/ui";
 
 Props:
 - index: number (required)
-- href: string — link URL
-- sourceTitle: string — shown in preview tooltip
-- preview: ReactNode — hover preview content
+- href: string
+- sourceTitle: string
+- preview: ReactNode
 - variant: "superscript" | "bracket" | "pill" (default "superscript")
 
 ### RefusalCard
@@ -167,14 +181,265 @@ import { RefusalCard } from "@arc-lo/ui";
 
 Types: safety (red), capability (amber), policy (orange), context (blue).
 
-Props:
-- type: "safety" | "capability" | "policy" | "context" (default "capability")
-- reason: string (has default per type)
-- suggestions: string[]
-- onSuggestionClick: (suggestion: string) => void
-- icon: ReactNode (override default icon)
+### ThinkingBlock
 
-Accepts children for custom content inside the card.
+Collapsible chain-of-thought reasoning display.
+
+```tsx
+import { ThinkingBlock } from "@arc-lo/ui";
+
+<ThinkingBlock.Root state="thinking" duration={3} collapseOnDone>
+  <ThinkingBlock.Trigger>Reasoning</ThinkingBlock.Trigger>
+  <ThinkingBlock.Content>
+    <p>Analyzing the problem step by step...</p>
+  </ThinkingBlock.Content>
+</ThinkingBlock.Root>
+```
+
+States: thinking, done.
+
+Root props:
+- state: "thinking" | "done"
+- duration: number — seconds spent thinking (shown in done state)
+- collapseOnDone: boolean — auto-collapse when done
+- defaultOpen: boolean
+
+### ToolCall
+
+Tool invocation display with status, inputs, and outputs.
+
+```tsx
+import { ToolCall } from "@arc-lo/ui";
+
+<ToolCall.Root toolName="search_web" status="success" defaultOpen>
+  <ToolCall.Header />
+  <ToolCall.Input>{JSON.stringify(params, null, 2)}</ToolCall.Input>
+  <ToolCall.Output>{JSON.stringify(result, null, 2)}</ToolCall.Output>
+</ToolCall.Root>
+```
+
+Statuses: pending, running, success, error.
+
+### MarkdownRenderer
+
+Streaming-aware markdown rendering.
+
+```tsx
+import { MarkdownRenderer } from "@arc-lo/ui";
+
+<MarkdownRenderer content={markdownText} />
+```
+
+Supports headings, paragraphs, lists, code blocks, links, blockquotes, bold, italic.
+
+### StatusIndicator
+
+Animated AI status label with letter-by-letter light sweep.
+
+```tsx
+import { StatusIndicator } from "@arc-lo/ui";
+
+<StatusIndicator state="thinking" />
+<StatusIndicator state="streaming" label="Writing..." />
+<StatusIndicator state="tool-calling" />
+```
+
+States: idle, thinking, streaming, tool-calling, error.
+
+Props:
+- state: StatusIndicatorState
+- label: string (auto-generated from state)
+- animation: "sweep" | "pulse" (default "sweep")
+
+### TokenUsage
+
+Visual token and cost meter.
+
+```tsx
+import { TokenUsage } from "@arc-lo/ui";
+
+<TokenUsage
+  inputTokens={1500}
+  outputTokens={800}
+  maxTokens={4096}
+  cost={0.0045}
+/>
+```
+
+### ModelSelector
+
+Dropdown selector for AI models.
+
+```tsx
+import { ModelSelector } from "@arc-lo/ui";
+
+<ModelSelector
+  models={[
+    { id: "claude-sonnet", name: "Claude Sonnet", badge: "Fast" },
+    { id: "claude-opus", name: "Claude Opus", badge: "New" },
+  ]}
+  value={selected}
+  onChange={setSelected}
+/>
+```
+
+### SourceCard
+
+RAG retrieval result card with relevance scoring.
+
+```tsx
+import { SourceCard } from "@arc-lo/ui";
+
+<SourceCard
+  title="Attention Is All You Need"
+  url="https://arxiv.org/abs/1706.03762"
+  content="We propose a new architecture..."
+  relevance={0.95}
+  variant="compact"
+/>
+```
+
+### ChatThread
+
+Conversation container with user, assistant, and system messages.
+
+```tsx
+import { ChatThread } from "@arc-lo/ui";
+
+<ChatThread.Root className="h-[500px]">
+  <ChatThread.Messages>
+    <ChatThread.SystemMessage>Today's conversation</ChatThread.SystemMessage>
+    <ChatThread.UserMessage name="You" avatar={<Avatar />}>
+      Hello!
+    </ChatThread.UserMessage>
+    <ChatThread.AssistantMessage name="Claude" avatar={<Avatar />}>
+      Hi! How can I help?
+    </ChatThread.AssistantMessage>
+    <ChatThread.ScrollAnchor />
+  </ChatThread.Messages>
+</ChatThread.Root>
+```
+
+### FileAttachment
+
+File preview chips and cards with type icons and upload progress.
+
+```tsx
+import { FileAttachment } from "@arc-lo/ui";
+
+<FileAttachment
+  name="report.pdf"
+  size="2.4 MB"
+  type="pdf"
+  progress={75}
+  onRemove={() => remove()}
+/>
+```
+
+### CodeBlock
+
+Code display with copy button, line numbers, and language badge.
+
+```tsx
+import { CodeBlock } from "@arc-lo/ui";
+
+<CodeBlock code={codeString} language="typescript" showLineNumbers />
+```
+
+### ConversationBranch
+
+Branch navigation for regenerated responses.
+
+```tsx
+import { ConversationBranch } from "@arc-lo/ui";
+
+<ConversationBranch
+  current={2}
+  total={3}
+  onPrevious={() => prev()}
+  onNext={() => next()}
+/>
+```
+
+### SuggestTopics
+
+Starter prompt cards for empty chat states.
+
+```tsx
+import { SuggestTopics, TopicCard } from "@arc-lo/ui";
+
+<SuggestTopics columns={2}>
+  <TopicCard
+    icon="✍️"
+    title="Write a blog post"
+    description="About AI design systems"
+    onSelect={(title) => setPrompt(title)}
+  />
+</SuggestTopics>
+
+<SuggestTopics variant="compact">
+  <TopicCard variant="compact" icon="🔍" title="Research" onSelect={handle} />
+</SuggestTopics>
+```
+
+### ImageGen
+
+Image generation with blur reveal, progress bar, and 5 states.
+
+```tsx
+import { ImageGen } from "@arc-lo/ui";
+
+<ImageGen.Root
+  state="generating"
+  src={imageUrl}
+  alt="Generated landscape"
+  aspectRatio="1/1"
+  blurReveal
+  onRetry={() => retry()}
+  onDownload={() => download()}
+>
+  <ImageGen.Placeholder />
+  <ImageGen.Preview />
+  <ImageGen.Progress progress={65} />
+  <ImageGen.Overlay />
+  <ImageGen.ErrorFallback message="Generation failed." />
+  <ImageGen.Toolbar>
+    <ImageGen.Download />
+    <ImageGen.Retry />
+  </ImageGen.Toolbar>
+</ImageGen.Root>
+```
+
+States: idle, pending, generating, done, error.
+
+### VideoGen
+
+Video generation with stages, progress, player, and 6 states.
+
+```tsx
+import { VideoGen } from "@arc-lo/ui";
+
+<VideoGen.Root
+  state="rendering"
+  poster={thumbnailUrl}
+  src={videoUrl}
+  progress={78}
+  aspectRatio="16/9"
+  onRetry={() => retry()}
+  onPlay={() => play()}
+>
+  <VideoGen.Placeholder />
+  <VideoGen.Thumbnail />
+  <VideoGen.Player />
+  <VideoGen.Progress />
+  <VideoGen.StageLabel />
+  <VideoGen.PlayButton />
+  <VideoGen.ErrorFallback message="Generation failed." />
+  <VideoGen.Toolbar />
+</VideoGen.Root>
+```
+
+States: idle, queued, processing, rendering, done, error.
 
 ## Architecture
 
@@ -184,9 +449,10 @@ All compound components follow Radix patterns:
 - All parts accept className for Tailwind customization
 - All parts forward refs
 - data-state attributes on Root for CSS targeting
+- All colors use CSS custom properties (--arclo-*) — theme-aware for light/dark
 
 ## Links
 
-- Docs: https://arclo.dev/docs
+- Docs: https://arc-lo.com/docs
 - GitHub: https://github.com/arc-lo/ui
 - npm: https://www.npmjs.com/package/@arc-lo/ui
