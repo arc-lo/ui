@@ -1,5 +1,6 @@
 import {
   PromptBoxBasicDemo,
+  PromptBoxVariantsDemo,
   PromptBoxFullDemo,
 } from "@/components/demos/prompt-box-demo";
 import { CodeBlock } from "@/components/code-block";
@@ -16,6 +17,7 @@ export default function PromptBoxDocs() {
       </p>
 
       <PromptBoxBasicDemo />
+      <PromptBoxVariantsDemo />
       <PromptBoxFullDemo />
 
       <h2>Import</h2>

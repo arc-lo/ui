@@ -72,6 +72,82 @@ export function PromptBoxBasicDemo() {
   );
 }
 
+export function PromptBoxVariantsDemo() {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = () => {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 1500);
+  };
+
+  return (
+    <DemoWrapper
+      title="PromptBox — Submit Button Variants"
+      code={`{/* Text only (default) */}
+<PromptBox.SubmitButton />
+
+{/* Icon only */}
+<PromptBox.SubmitButton variant="icon" />
+
+{/* Icon + text */}
+<PromptBox.SubmitButton variant="icon-text" />
+
+{/* Fully custom */}
+<PromptBox.SubmitButton>🚀 Launch</PromptBox.SubmitButton>`}
+    >
+      <div className="space-y-4">
+        <p
+          className="text-xs font-medium"
+          style={{ color: "var(--docs-muted)" }}
+        >
+          Default (text)
+        </p>
+        <PromptBox.Root onSubmit={handleSubmit} isSubmitting={loading}>
+          <PromptBox.Input placeholder="Default submit button..." />
+          <PromptBox.Footer>
+            <span className="text-xs" style={{ color: "var(--docs-muted)" }}>
+              Enter to send
+            </span>
+            <PromptBox.SubmitButton />
+          </PromptBox.Footer>
+        </PromptBox.Root>
+
+        <p
+          className="text-xs font-medium"
+          style={{ color: "var(--docs-muted)" }}
+        >
+          Icon only
+        </p>
+        <PromptBox.Root onSubmit={handleSubmit} isSubmitting={loading}>
+          <PromptBox.Input placeholder="Icon-only submit button..." />
+          <PromptBox.Footer>
+            <span className="text-xs" style={{ color: "var(--docs-muted)" }}>
+              Enter to send
+            </span>
+            <PromptBox.SubmitButton variant="icon" />
+          </PromptBox.Footer>
+        </PromptBox.Root>
+
+        <p
+          className="text-xs font-medium"
+          style={{ color: "var(--docs-muted)" }}
+        >
+          Icon + text
+        </p>
+        <PromptBox.Root onSubmit={handleSubmit} isSubmitting={loading}>
+          <PromptBox.Input placeholder="Icon + text submit button..." />
+          <PromptBox.Footer>
+            <span className="text-xs" style={{ color: "var(--docs-muted)" }}>
+              Enter to send
+            </span>
+            <PromptBox.SubmitButton variant="icon-text" />
+          </PromptBox.Footer>
+        </PromptBox.Root>
+      </div>
+    </DemoWrapper>
+  );
+}
+
 export function PromptBoxFullDemo() {
   const [chips, setChips] = useState(["Claude 3.5", "report.pdf"]);
   const [loading, setLoading] = useState(false);

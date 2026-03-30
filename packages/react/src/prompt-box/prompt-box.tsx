@@ -279,12 +279,50 @@ Footer.displayName = "PromptBox.Footer";
 /* ─── Submit Button ───────────────────────────────────────────────── */
 
 export interface PromptBoxSubmitProps
-  extends HTMLAttributes<HTMLButtonElement> {}
+  extends HTMLAttributes<HTMLButtonElement> {
+  /** Visual variant. "default" = text, "icon" = arrow icon only, "icon-text" = icon + text. Default: "default" */
+  variant?: "default" | "icon" | "icon-text";
+  /** Custom loading label. Default: "Sending..." */
+  loadingLabel?: string;
+}
+
+const ArrowUpIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 19V5M5 12l7-7 7 7" />
+  </svg>
+);
 
 export const SubmitButton = forwardRef<HTMLButtonElement, PromptBoxSubmitProps>(
-  ({ children, className, ...props }, ref) => {
+  ({ children, variant = "default", loadingLabel, className, ...props }, ref) => {
     const { value, isSubmitting, disabled } = usePromptBoxContext();
     const isEmpty = !value.trim();
+
+    const isIcon = variant === "icon";
+
+    const content = children ?? (
+      isIcon ? (
+        isSubmitting ? (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+        ) : (
+          <ArrowUpIcon />
+        )
+      ) : variant === "icon-text" ? (
+        <span className="inline-flex items-center gap-1.5">
+          {isSubmitting ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg>
+          ) : (
+            <ArrowUpIcon />
+          )}
+          {isSubmitting ? (loadingLabel ?? "Sending...") : "Send"}
+        </span>
+      ) : (
+        isSubmitting ? (loadingLabel ?? "Sending...") : "Send"
+      )
+    );
 
     return (
       <button
@@ -293,12 +331,15 @@ export const SubmitButton = forwardRef<HTMLButtonElement, PromptBoxSubmitProps>(
         disabled={isEmpty || isSubmitting || disabled}
         style={{ backgroundColor: themeVars.accent, color: themeVars.accentFg }}
         className={cn(
-          "arclo-prompt-submit ml-auto rounded-xl px-4 py-2 text-sm font-medium transition-all hover:brightness-90 disabled:opacity-25 cursor-pointer disabled:cursor-default",
+          "arclo-prompt-submit ml-auto transition-all hover:brightness-90 disabled:opacity-25 cursor-pointer disabled:cursor-default",
+          isIcon
+            ? "rounded-xl p-2"
+            : "rounded-xl px-4 py-2 text-sm font-medium",
           className,
         )}
         {...props}
       >
-        {children ?? (isSubmitting ? "Sending..." : "Send")}
+        {content}
       </button>
     );
   },
