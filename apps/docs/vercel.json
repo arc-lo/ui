@@ -1,5 +1,6 @@
 {
   "installCommand": "cd ../.. && pnpm install && pnpm --filter @arc-lo/ui build",
   "buildCommand": "next build",
+  "outputDirectory": ".next",
   "framework": "nextjs"
 }
