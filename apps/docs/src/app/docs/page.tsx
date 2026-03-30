@@ -7,55 +7,68 @@ export default function DocsIndex() {
     <article className="prose prose-gray max-w-3xl">
       <h1>Getting Started</h1>
       <p>
-        arclo is an AI-native design system for React. It provides 13
-        primitives every AI product needs — components that don&apos;t exist in
+        arclo is an AI-native design system for React. It provides 20
+        components every AI product needs — primitives that don&apos;t exist in
         MUI, Tailwind, Radix, or shadcn/ui.
       </p>
 
       <h2>Installation</h2>
       <CodeBlock lang="bash" code={`npm install @arc-lo/ui`} />
 
-      <h3>Peer dependencies</h3>
-      <p>arclo requires React 18+ and Tailwind CSS 4+.</p>
-      <CodeBlock lang="bash" code={`npm install react react-dom tailwindcss`} />
+      <h2>Setup</h2>
+      <p>Add the styles import to your CSS file:</p>
+      <CodeBlock
+        lang="css"
+        code={`@import "tailwindcss";
+@import "@arc-lo/ui/styles.css";`}
+      />
+      <p>
+        That&apos;s it — theme variables, dark mode, and Tailwind utility
+        scanning are all included. See <Link href="/docs/theming">Theming</Link>{" "}
+        for color customization.
+      </p>
 
       <h2>Quick start</h2>
       <CodeBlock
         lang="tsx"
         code={`import {
+  ChatThread,
   StreamingText,
   FeedbackBar,
   ThinkingBlock,
-  StatusIndicator,
+  PromptBox,
 } from "@arc-lo/ui";
 
-function ChatMessage({ stream, thinkingState }) {
+function Chat({ response }) {
   return (
-    <div>
-      <StatusIndicator state={thinkingState} />
+    <ChatThread.Root className="h-[500px]">
+      <ChatThread.Messages>
+        <ChatThread.UserMessage name="You">
+          How does this work?
+        </ChatThread.UserMessage>
 
-      <ThinkingBlock.Root state={thinkingState} collapseOnDone>
-        <ThinkingBlock.Trigger />
-        <ThinkingBlock.Content>
-          <p>Analyzing the request...</p>
-        </ThinkingBlock.Content>
-      </ThinkingBlock.Root>
+        <ChatThread.AssistantMessage name="Claude">
+          <ThinkingBlock.Root state="done" duration={3} collapseOnDone>
+            <ThinkingBlock.Trigger />
+            <ThinkingBlock.Content>Analyzing...</ThinkingBlock.Content>
+          </ThinkingBlock.Root>
 
-      <StreamingText.Root stream={stream} speed={30}>
-        <StreamingText.Skeleton lines={3} />
-        <StreamingText.Content />
-        <StreamingText.Cursor />
-        <StreamingText.Stop />
-        <StreamingText.Toolbar>
-          <FeedbackBar.Root>
-            <FeedbackBar.ThumbsUp />
-            <FeedbackBar.ThumbsDown />
-            <FeedbackBar.Copy />
-            <FeedbackBar.Regenerate />
-          </FeedbackBar.Root>
-        </StreamingText.Toolbar>
-      </StreamingText.Root>
-    </div>
+          <StreamingText.Root text={response} speed={30}>
+            <StreamingText.Content />
+            <StreamingText.Cursor />
+            <StreamingText.Toolbar>
+              <FeedbackBar.Root>
+                <FeedbackBar.ThumbsUp />
+                <FeedbackBar.ThumbsDown />
+                <FeedbackBar.Copy />
+              </FeedbackBar.Root>
+            </StreamingText.Toolbar>
+          </StreamingText.Root>
+        </ChatThread.AssistantMessage>
+
+        <ChatThread.ScrollAnchor />
+      </ChatThread.Messages>
+    </ChatThread.Root>
   );
 }`}
       />
@@ -84,8 +97,12 @@ function ChatMessage({ stream, thinkingState }) {
           chain-of-thought reasoning and tool invocations out of the box.
         </li>
         <li>
-          <strong><Link href="/docs/theming">Themeable</Link></strong> — CSS custom properties for colors,
-          surfaces, and borders. 6 built-in color themes. Supports light and dark mode.
+          <strong>Media generation</strong> — ImageGen and VideoGen for
+          AI-generated images and videos with progress, states, and playback.
+        </li>
+        <li>
+          <strong><Link href="/docs/theming">Themeable</Link></strong> — 6
+          built-in color themes, CSS custom properties, light + dark mode.
         </li>
       </ul>
 
@@ -97,6 +114,7 @@ function ChatMessage({ stream, thinkingState }) {
           { cells: ["StreamingText", "Token-by-token rendering with 6 lifecycle states"] },
           { cells: ["MarkdownRenderer", "Streaming-aware markdown with code blocks, lists, and links"] },
           { cells: ["StatusIndicator", "Animated AI status label with letter-by-letter light sweep"] },
+          { cells: ["CodeBlock", "Code display with copy button, line numbers, and language badge"] },
         ]}
       />
 
@@ -107,6 +125,9 @@ function ChatMessage({ stream, thinkingState }) {
           { cells: ["PromptBox", "AI prompt input with auto-grow, chips, and suggestions"] },
           { cells: ["FeedbackBar", "Response actions toolbar — thumbs, copy, regenerate"] },
           { cells: ["ModelSelector", "Dropdown selector for AI models with badges"] },
+          { cells: ["SuggestTopics", "Starter prompt cards for empty chat states"] },
+          { cells: ["ConversationBranch", "Branch navigation for regenerated responses"] },
+          { cells: ["FileAttachment", "File preview chips/cards with type icons and upload progress"] },
         ]}
       />
 
@@ -126,6 +147,16 @@ function ChatMessage({ stream, thinkingState }) {
         rows={[
           { cells: ["ThinkingBlock", "Collapsible chain-of-thought reasoning display"] },
           { cells: ["ToolCall", "Tool invocation with status, inputs, and outputs"] },
+          { cells: ["ChatThread", "Conversation container with user/assistant/system messages"] },
+        ]}
+      />
+
+      <h3>Media generation</h3>
+      <InfoTable
+        headers={["Component", "Purpose"]}
+        rows={[
+          { cells: ["ImageGen", "Image generation with blur reveal, progress, and 5 states"] },
+          { cells: ["VideoGen", "Video generation with stages, player, progress, and 6 states"] },
         ]}
       />
 
