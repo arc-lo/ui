@@ -246,3 +246,82 @@ export const ScrollAnchor = forwardRef<HTMLDivElement, ChatThreadScrollAnchorPro
   },
 );
 ScrollAnchor.displayName = "ChatThread.ScrollAnchor";
+
+/* ─── Avatar ────────────────────────────────────────────────────── */
+
+export interface ChatThreadAvatarProps extends HTMLAttributes<HTMLDivElement> {
+  /** Image URL for the avatar */
+  src?: string;
+  /** Initials to display when no src is provided */
+  initials?: string;
+  /** Custom icon element */
+  icon?: ReactNode;
+  /** Background color. Default: accent for assistant, surface-secondary for user */
+  color?: string;
+  /** Text/icon color. Default: auto based on background */
+  textColor?: string;
+  /** Size in px. Default: 28 */
+  size?: number;
+}
+
+export const Avatar = forwardRef<HTMLDivElement, ChatThreadAvatarProps>(
+  (
+    {
+      src,
+      initials,
+      icon,
+      color,
+      textColor,
+      size = 28,
+      className,
+      style,
+      ...props
+    },
+    ref,
+  ) => {
+    const bg = color ?? themeVars.accent;
+    const fg = textColor ?? themeVars.accentFg;
+
+    if (src) {
+      return (
+        <div
+          ref={ref}
+          className={cn(
+            "arclo-chat-avatar shrink-0 overflow-hidden rounded-full",
+            className,
+          )}
+          style={{ width: size, height: size, ...style }}
+          {...props}
+        >
+          <img
+            src={src}
+            alt={initials ?? "Avatar"}
+            className="h-full w-full object-cover"
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "arclo-chat-avatar shrink-0 flex items-center justify-center rounded-full font-semibold",
+          className,
+        )}
+        style={{
+          width: size,
+          height: size,
+          backgroundColor: bg,
+          color: fg,
+          fontSize: size * 0.4,
+          ...style,
+        }}
+        {...props}
+      >
+        {icon ?? initials ?? "?"}
+      </div>
+    );
+  },
+);
+Avatar.displayName = "ChatThread.Avatar";

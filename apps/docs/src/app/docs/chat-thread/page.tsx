@@ -1,4 +1,4 @@
-import { ChatThreadDemo } from "@/components/demos/chat-thread-demo";
+import { ChatThreadDemo, ChatThreadAvatarDemo } from "@/components/demos/chat-thread-demo";
 import { CodeBlock } from "@/components/code-block";
 import { PropsTable, InfoTable } from "@/components/props-table";
 
@@ -14,6 +14,7 @@ export default function ChatThreadDocs() {
       </p>
 
       <ChatThreadDemo />
+      <ChatThreadAvatarDemo />
 
       <h2>Import</h2>
       <CodeBlock lang="tsx" code={`import { ChatThread } from "@arc-lo/ui";`} />
