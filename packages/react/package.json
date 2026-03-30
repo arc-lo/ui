@@ -1,6 +1,6 @@
 {
   "name": "@arc-lo/ui",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AI-native design system components — built on Radix, extended for AI",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -22,6 +22,7 @@
   --arclo-warning: #f59e0b;
   --arclo-warning-surface: #fffbeb;
   --arclo-radius: 0.75rem;
+  --arclo-hover-bg: rgba(0, 0, 0, 0.06);
 }
 
 /* ─── Dark theme (prefers-color-scheme) ───────────────────────────── */
@@ -40,6 +41,7 @@
     --arclo-error-surface: #451a1a;
     --arclo-warning: #fbbf24;
     --arclo-warning-surface: #452a1a;
+    --arclo-hover-bg: rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -58,11 +60,15 @@
   --arclo-error-surface: #451a1a;
   --arclo-warning: #fbbf24;
   --arclo-warning-surface: #452a1a;
+  --arclo-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
 /* ─── Component styles ────────────────────────────────────────────── */
 .arclo-feedback-btn:hover {
-  background-color: var(--arclo-surface-secondary, #f9fafb);
+  background-color: var(--arclo-hover-bg, rgba(0, 0, 0, 0.06));
+}
+
+.arclo-feedback-btn:not([aria-pressed="true"]):hover {
   color: var(--arclo-text-secondary, #6b7280);
 }
 
