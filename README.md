@@ -2,7 +2,7 @@
 
 **AI-native design system for React**
 
-18 components for building AI interfaces — streaming, prompts, confidence, feedback, citations, refusals, reasoning, tool calls, and more. Built on Radix conventions. Themeable. Works with shadcn/ui.
+20 components for building AI interfaces — streaming, prompts, confidence, feedback, citations, refusals, reasoning, tool calls, image/video generation, and more. Built on Radix conventions. 6 color themes. Works with shadcn/ui.
 
 ## Install
 
@@ -10,43 +10,56 @@
 npm install @arc-lo/ui
 ```
 
+## Setup
+
+```css
+@import "tailwindcss";
+@import "@arc-lo/ui/styles.css";
+```
+
+One import — theme variables, dark mode, and Tailwind utility scanning all included.
+
 ## Quick start
 
 ```tsx
 import {
+  ChatThread,
   StreamingText,
   FeedbackBar,
   ThinkingBlock,
   PromptBox,
 } from "@arc-lo/ui";
 
-function Chat({ stream }) {
+function Chat() {
   return (
-    <>
-      <ThinkingBlock.Root state="done" duration={3} collapseOnDone>
-        <ThinkingBlock.Trigger />
-        <ThinkingBlock.Content>Analyzing...</ThinkingBlock.Content>
-      </ThinkingBlock.Root>
+    <ChatThread.Root className="h-[500px]">
+      <ChatThread.Messages>
+        <ChatThread.UserMessage name="You">
+          How does this work?
+        </ChatThread.UserMessage>
 
-      <StreamingText.Root stream={stream} speed={30}>
-        <StreamingText.Content />
-        <StreamingText.Cursor />
-        <StreamingText.Toolbar>
-          <FeedbackBar.Root>
-            <FeedbackBar.ThumbsUp />
-            <FeedbackBar.ThumbsDown />
-            <FeedbackBar.Copy />
-          </FeedbackBar.Root>
-        </StreamingText.Toolbar>
-      </StreamingText.Root>
+        <ChatThread.AssistantMessage name="Claude">
+          <ThinkingBlock.Root state="done" duration={3} collapseOnDone>
+            <ThinkingBlock.Trigger />
+            <ThinkingBlock.Content>Analyzing...</ThinkingBlock.Content>
+          </ThinkingBlock.Root>
 
-      <PromptBox.Root onSubmit={send}>
-        <PromptBox.Input />
-        <PromptBox.Footer>
-          <PromptBox.SubmitButton />
-        </PromptBox.Footer>
-      </PromptBox.Root>
-    </>
+          <StreamingText.Root text={response} speed={30}>
+            <StreamingText.Content />
+            <StreamingText.Cursor />
+            <StreamingText.Toolbar>
+              <FeedbackBar.Root>
+                <FeedbackBar.ThumbsUp />
+                <FeedbackBar.ThumbsDown />
+                <FeedbackBar.Copy />
+              </FeedbackBar.Root>
+            </StreamingText.Toolbar>
+          </StreamingText.Root>
+        </ChatThread.AssistantMessage>
+
+        <ChatThread.ScrollAnchor />
+      </ChatThread.Messages>
+    </ChatThread.Root>
   );
 }
 ```
@@ -89,6 +102,13 @@ function Chat({ stream }) {
 | `ToolCall` | Tool invocation with status, inputs, and outputs |
 | `ChatThread` | Conversation container with user/assistant/system messages |
 
+### Media generation
+
+| Component | Description |
+|---|---|
+| `ImageGen` | Image generation with blur reveal, progress, 5 states |
+| `VideoGen` | Video generation with stages, player, progress, 6 states |
+
 ### Analytics & data
 
 | Component | Description |
@@ -98,26 +118,27 @@ function Chat({ stream }) {
 
 ## Theming
 
-Override CSS custom properties to match your brand:
+6 built-in color themes. Default is Noir (black).
+
+```html
+<html data-theme="violet">
+```
+
+Available: `noir` (default), `violet`, `ocean`, `forest`, `sunset`, `rose`
+
+Or override CSS variables directly:
 
 ```css
-@import "@arc-lo/ui/theme.css"; /* includes light + dark mode */
-
-/* Or set manually */
 :root {
   --arclo-accent: #6C5CE7;
+  --arclo-accent-fg: #ffffff;
   --arclo-surface: #ffffff;
   --arclo-border: #e5e7eb;
   --arclo-text: #1a1a1a;
 }
-
-.dark {
-  --arclo-accent: #a78bfa;
-  --arclo-surface: #1a1a2e;
-  --arclo-border: #2d2d44;
-  --arclo-text: #e2e8f0;
-}
 ```
+
+Dark mode works via `.dark` class or `prefers-color-scheme: dark` — automatic with the styles import.
 
 ## Philosophy
 
@@ -126,12 +147,14 @@ Override CSS custom properties to match your brand:
 - **Works with shadcn/ui** — same Tailwind + Radix conventions
 - **Trust & uncertainty** — visual language for confidence, citations, refusals
 - **Agent-ready** — ThinkingBlock and ToolCall for reasoning and tool use
-- **Themeable** — CSS variables with light/dark mode support
+- **Media generation** — ImageGen and VideoGen for AI-generated content
+- **Themeable** — 6 color themes, CSS variables, light + dark mode
 
 ## Links
 
-- [Docs](https://arclo.dev)
+- [Docs](https://arc-lo.com)
 - [npm](https://www.npmjs.com/package/@arc-lo/ui)
+- [GitHub](https://github.com/arc-lo/ui)
 
 ## License
 
