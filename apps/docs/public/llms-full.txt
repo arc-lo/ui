@@ -1,0 +1,1909 @@
+# arclo — Full API Reference
+
+> AI-native design system for React. 20 components that don't exist in MUI, Tailwind, Radix, or shadcn/ui.
+
+Built on Radix conventions. Works with shadcn/ui. TypeScript + Tailwind CSS. 6 color themes. Light + dark mode.
+
+---
+
+## Install
+
+```
+npm install @arc-lo/ui
+```
+
+Peer dependencies: react >=18, react-dom >=18, tailwindcss >=4
+
+## Setup
+
+```css
+@import "tailwindcss";
+@import "@arc-lo/ui/styles.css";
+```
+
+That's it — theme variables, dark mode, and Tailwind utility scanning are all included.
+
+---
+
+## Theming
+
+6 built-in color themes: noir (default/black), violet, ocean, forest, sunset, rose.
+
+Set via data attribute on html:
+
+```html
+<html data-theme="violet">
+```
+
+### CSS Custom Properties
+
+Override any variable to create a custom theme:
+
+```css
+:root {
+  --arclo-accent: #6C5CE7;
+  --arclo-accent-fg: #ffffff;
+  --arclo-accent-hover: #5A4BD1;
+  --arclo-accent-bright: #8B7CF7;
+  --arclo-surface: #ffffff;
+  --arclo-surface-secondary: #f9fafb;
+  --arclo-border: #e5e7eb;
+  --arclo-text: #1a1a1a;
+  --arclo-text-secondary: #6b7280;
+  --arclo-text-muted: #9ca3af;
+  --arclo-error: #ef4444;
+  --arclo-error-surface: #fef2f2;
+  --arclo-warning: #f59e0b;
+  --arclo-warning-surface: #fffbeb;
+  --arclo-radius: 0.5rem;
+  --arclo-hover-bg: rgba(0, 0, 0, 0.04);
+}
+```
+
+### Dark Mode
+
+Add `.dark` class to html element, or rely on automatic `prefers-color-scheme: dark` media query.
+
+```html
+<html class="dark" data-theme="violet">
+```
+
+---
+
+## Architecture
+
+All compound components follow Radix patterns:
+
+- Root provides context via React Context
+- Child parts consume context and render conditionally based on state
+- All parts accept className for Tailwind customization
+- All parts forward refs
+- data-state attributes on Root for CSS targeting
+- All colors use CSS custom properties (--arclo-*) — theme-aware for light/dark
+
+---
+
+## Components
+
+All imports are from `@arc-lo/ui`.
+
+---
+
+### StreamingText
+
+Token-by-token text rendering with 6 lifecycle states. Compound component.
+
+#### Import
+
+```tsx
+import { StreamingText, useStreamingText } from "@arc-lo/ui";
+```
+
+#### Parts
+
+| Part | Description |
+|------|-------------|
+| StreamingText.Root | Provider. Manages streaming state and animation. |
+| StreamingText.Content | Renders the streamed text. |
+| StreamingText.Cursor | Blinking cursor shown during streaming. |
+| StreamingText.Skeleton | Loading placeholder shown in pending state. |
+| StreamingText.ErrorFallback | Error display shown in error state. |
+| StreamingText.RateLimit | Rate limit display shown in ratelimit state. |
+| StreamingText.Toolbar | Action bar, shown conditionally by state. |
+| StreamingText.Stop | Button to interrupt streaming. |
+
+#### Props — StreamingText.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| stream | ReadableStream<string> | — | Readable stream source |
+| text | string | — | Static text to animate (alternative to stream) |
+| speed | number | 30 | Milliseconds between chunks |
+| chunkSize | "char" \| "word" \| "line" | "char" | Size of each rendered chunk |
+| onDone | () => void | — | Called when streaming completes |
+| onError | (error: Error) => void | — | Called on stream error |
+| onInterrupt | () => void | — | Called when user stops streaming |
+
+#### Props — StreamingText.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| render | (text: string) => ReactNode | — | Custom render function for displayed text |
+
+#### Props — StreamingText.Cursor
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| char | string | "&#9612;" | Cursor character |
+
+#### Props — StreamingText.Skeleton
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| lines | number | 3 | Number of skeleton lines |
+
+#### Props — StreamingText.ErrorFallback
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| message | string | — | Error message to display |
+| onRetry | () => void | — | Retry callback |
+
+#### Props — StreamingText.RateLimit
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| retryAfter | number | — | Seconds until retry is allowed |
+| message | string | — | Custom rate limit message |
+
+#### Props — StreamingText.Toolbar
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| showIn | StreamingState[] | — | States in which toolbar is visible |
+
+#### States
+
+`StreamingState = "pending" | "streaming" | "done" | "interrupted" | "error" | "ratelimit"`
+
+#### Hook — useStreamingText
+
+```tsx
+const { displayedText, fullText, state, interrupt, reset, skipAnimation } =
+  useStreamingText({ text, speed, chunkSize, onDone });
+```
+
+| Return | Type | Description |
+|--------|------|-------------|
+| displayedText | string | Currently visible text |
+| fullText | string | Complete text received so far |
+| state | StreamingState | Current lifecycle state |
+| interrupt | () => void | Stop streaming |
+| reset | () => void | Reset to pending state |
+| skipAnimation | () => void | Jump to showing full text |
+
+#### Full Example
+
+```tsx
+<StreamingText.Root text={response} speed={20} chunkSize="word" onDone={() => setDone(true)}>
+  <StreamingText.Skeleton lines={3} />
+  <StreamingText.Content />
+  <StreamingText.Cursor char="|" />
+  <StreamingText.Stop />
+  <StreamingText.ErrorFallback message="Something went wrong." onRetry={() => retry()} />
+  <StreamingText.RateLimit retryAfter={30} message="Rate limited. Please wait." />
+  <StreamingText.Toolbar showIn={["done", "interrupted"]}>
+    <button>Copy</button>
+  </StreamingText.Toolbar>
+</StreamingText.Root>
+```
+
+---
+
+### PromptBox
+
+AI prompt input with auto-growing textarea, context chips, and suggestions. Compound component.
+
+#### Import
+
+```tsx
+import { PromptBox } from "@arc-lo/ui";
+```
+
+#### Parts
+
+| Part | Description |
+|------|-------------|
+| PromptBox.Root | Provider. Manages value and submission state. |
+| PromptBox.Chips | Container for context chips above the input. |
+| PromptBox.Chip | Individual removable chip. |
+| PromptBox.Input | Auto-growing textarea. |
+| PromptBox.Footer | Bottom bar for submit button and extras. |
+| PromptBox.SubmitButton | Submit trigger with loading state. |
+| PromptBox.Suggestions | Suggestion pills below the input. |
+
+#### Props — PromptBox.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| value | string | — | Controlled input value |
+| defaultValue | string | — | Uncontrolled initial value |
+| onSubmit | (value: string) => void | — | Called on submit (Enter key or button) |
+| onValueChange | (value: string) => void | — | Called when input value changes |
+| isSubmitting | boolean | false | Shows loading state, disables input |
+| disabled | boolean | false | Disables the entire prompt box |
+
+#### Props — PromptBox.Chip
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| onRemove | () => void | — | Called when chip remove button is clicked |
+
+#### Props — PromptBox.Input
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| minRows | number | 1 | Minimum textarea rows |
+| maxRows | number | 8 | Maximum textarea rows before scrolling |
+
+#### Props — PromptBox.SubmitButton
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | "default" \| "icon" \| "icon-text" | "default" | Button style variant |
+| loadingLabel | string | — | Label shown during isSubmitting |
+
+#### Props — PromptBox.Suggestions
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| suggestions | string[] | — | List of suggestion strings |
+| onSelect | (suggestion: string) => void | — | Called when a suggestion is clicked |
+
+#### Behavior
+
+- Enter submits, Shift+Enter adds newline
+- Textarea auto-grows between minRows and maxRows
+
+#### Full Example
+
+```tsx
+<PromptBox.Root
+  value={input}
+  onValueChange={setInput}
+  onSubmit={(value) => sendMessage(value)}
+  isSubmitting={loading}
+>
+  <PromptBox.Chips>
+    <PromptBox.Chip onRemove={() => removeModel()}>Claude Sonnet</PromptBox.Chip>
+    <PromptBox.Chip onRemove={() => removeFile()}>report.pdf</PromptBox.Chip>
+  </PromptBox.Chips>
+  <PromptBox.Input placeholder="Ask anything..." minRows={2} maxRows={6} />
+  <PromptBox.Suggestions
+    suggestions={["Summarize this document", "Explain the key findings", "Write a follow-up"]}
+    onSelect={(s) => setInput(s)}
+  />
+  <PromptBox.Footer>
+    <span className="text-xs text-[var(--arclo-text-muted)]">Shift+Enter for newline</span>
+    <PromptBox.SubmitButton variant="icon-text" loadingLabel="Sending..." />
+  </PromptBox.Footer>
+</PromptBox.Root>
+```
+
+---
+
+### ConfidenceBadge
+
+Visual indicator for AI confidence levels. Simple component.
+
+#### Import
+
+```tsx
+import { ConfidenceBadge } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| level | "high" \| "medium" \| "low" \| "unknown" | — | Required. Confidence level |
+| variant | "badge" \| "dot" \| "inline" | "badge" | Display variant |
+| label | string | — | Custom label (overrides default level label) |
+
+#### Examples
+
+```tsx
+<ConfidenceBadge level="high" />
+<ConfidenceBadge level="medium" variant="dot" />
+<ConfidenceBadge level="low" variant="inline" label="Low certainty" />
+<ConfidenceBadge level="unknown" variant="badge" />
+```
+
+---
+
+### FeedbackBar
+
+Response action toolbar with thumbs up/down, copy, and regenerate. Compound component.
+
+#### Import
+
+```tsx
+import { FeedbackBar } from "@arc-lo/ui";
+```
+
+#### Parts
+
+| Part | Description |
+|------|-------------|
+| FeedbackBar.Root | Provider. Manages feedback state. |
+| FeedbackBar.ThumbsUp | Thumbs up button. Toggleable. |
+| FeedbackBar.ThumbsDown | Thumbs down button. Toggleable. |
+| FeedbackBar.Copy | Copy-to-clipboard button. |
+| FeedbackBar.Regenerate | Regenerate response button. |
+
+#### Props — FeedbackBar.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| onFeedback | (value: "up" \| "down" \| null) => void | — | Called when feedback changes. null = deselected. |
+
+#### Props — FeedbackBar.Copy
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| text | string | — | Text to copy to clipboard |
+
+#### Props — FeedbackBar.Regenerate
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| onRegenerate | () => void | — | Called when regenerate is clicked |
+
+#### Full Example
+
+```tsx
+<FeedbackBar.Root onFeedback={(value) => trackFeedback(messageId, value)}>
+  <FeedbackBar.ThumbsUp />
+  <FeedbackBar.ThumbsDown />
+  <FeedbackBar.Copy text={message.content} />
+  <FeedbackBar.Regenerate onRegenerate={() => regenerate(messageId)} />
+</FeedbackBar.Root>
+```
+
+---
+
+### CitationInline
+
+Inline source attribution with hover preview. Simple component with grouping wrapper.
+
+#### Import
+
+```tsx
+import { CitationInline, CitationGroup } from "@arc-lo/ui";
+```
+
+#### Props — CitationInline
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| index | number | — | Required. Citation number |
+| href | string | — | Link URL for the source |
+| sourceTitle | string | — | Title of the source |
+| preview | ReactNode | — | Content shown on hover |
+| variant | "superscript" \| "bracket" \| "pill" | "superscript" | Display style |
+
+#### CitationGroup
+
+Wraps multiple CitationInline components for compact display.
+
+#### Examples
+
+```tsx
+{/* Single citation */}
+<p>
+  The transformer architecture revolutionized NLP
+  <CitationInline
+    index={1}
+    href="https://arxiv.org/abs/1706.03762"
+    sourceTitle="Attention Is All You Need"
+    preview="We propose a new simple network architecture, the Transformer..."
+  />
+</p>
+
+{/* Grouped citations */}
+<p>
+  Multiple studies confirm this finding
+  <CitationGroup>
+    <CitationInline index={1} href="/source/1" sourceTitle="Study A" />
+    <CitationInline index={2} href="/source/2" sourceTitle="Study B" />
+    <CitationInline index={3} href="/source/3" sourceTitle="Study C" />
+  </CitationGroup>
+</p>
+
+{/* Variant styles */}
+<CitationInline index={1} variant="superscript" />  {/* renders as superscript number */}
+<CitationInline index={2} variant="bracket" />      {/* renders as [2] */}
+<CitationInline index={3} variant="pill" />          {/* renders as rounded pill */}
+```
+
+---
+
+### RefusalCard
+
+Graceful declined request handling with alternative suggestions. Simple component.
+
+#### Import
+
+```tsx
+import { RefusalCard } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| reason | string | — | Why the request was declined |
+| type | "safety" \| "capability" \| "policy" \| "context" | — | Refusal category (sets color) |
+| suggestions | string[] | — | Alternative prompts to offer |
+| onSuggestionClick | (suggestion: string) => void | — | Called when user clicks a suggestion |
+| icon | ReactNode | — | Custom icon (default per type) |
+
+#### Type Colors
+
+- safety: red
+- capability: amber
+- policy: orange
+- context: blue
+
+#### Full Example
+
+```tsx
+<RefusalCard
+  type="safety"
+  reason="I'm not able to help with that request as it involves generating harmful content."
+  suggestions={[
+    "Can you help me write a fictional story instead?",
+    "What are some creative writing tips?",
+    "Help me brainstorm story ideas"
+  ]}
+  onSuggestionClick={(suggestion) => submitPrompt(suggestion)}
+/>
+
+<RefusalCard
+  type="capability"
+  reason="I don't have access to real-time data."
+  suggestions={["What data do you have access to?"]}
+  onSuggestionClick={submitPrompt}
+/>
+```
+
+---
+
+### ThinkingBlock
+
+Collapsible chain-of-thought reasoning display. Compound component.
+
+#### Import
+
+```tsx
+import { ThinkingBlock } from "@arc-lo/ui";
+```
+
+#### Parts
+
+| Part | Description |
+|------|-------------|
+| ThinkingBlock.Root | Provider. Manages open/closed and thinking state. |
+| ThinkingBlock.Trigger | Clickable header to expand/collapse. |
+| ThinkingBlock.Content | Collapsible content area. |
+
+#### Props — ThinkingBlock.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| state | "thinking" \| "done" \| "error" | — | Current thinking state |
+| defaultOpen | boolean | true | Initial open state |
+| collapseOnDone | boolean | true | Auto-collapse when state becomes "done" |
+| duration | number | — | Seconds spent thinking (displayed in done state) |
+
+#### Props — ThinkingBlock.Trigger
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| label | string | — | Custom trigger label |
+
+#### Full Example
+
+```tsx
+<ThinkingBlock.Root state={thinkingState} duration={elapsed} collapseOnDone defaultOpen>
+  <ThinkingBlock.Trigger label="Chain of thought" />
+  <ThinkingBlock.Content>
+    <p>Step 1: Analyzing the user's question about quantum computing...</p>
+    <p>Step 2: Considering relevant research papers...</p>
+    <p>Step 3: Formulating a comprehensive answer...</p>
+  </ThinkingBlock.Content>
+</ThinkingBlock.Root>
+```
+
+---
+
+### ToolCall
+
+Tool invocation display with status, inputs, and outputs. Compound component.
+
+#### Import
+
+```tsx
+import { ToolCall } from "@arc-lo/ui";
+```
+
+#### Parts
+
+| Part | Description |
+|------|-------------|
+| ToolCall.Root | Provider. Manages tool status and display. |
+| ToolCall.Header | Shows tool name and status icon. |
+| ToolCall.Input | Collapsible section for tool input parameters. |
+| ToolCall.Output | Collapsible section for tool output/result. |
+
+#### Props — ToolCall.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| toolName | string | — | Required. Name of the tool |
+| status | "pending" \| "running" \| "success" \| "error" | — | Current execution status |
+| defaultOpen | boolean | false | Initial open state for input/output sections |
+
+#### Props — ToolCall.Input
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| label | string | "Input" | Section label |
+
+#### Props — ToolCall.Output
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| label | string | "Output" | Section label |
+
+#### Full Example
+
+```tsx
+<ToolCall.Root toolName="search_web" status="success" defaultOpen>
+  <ToolCall.Header />
+  <ToolCall.Input label="Query">
+    {JSON.stringify({ query: "latest AI research papers 2025", limit: 5 }, null, 2)}
+  </ToolCall.Input>
+  <ToolCall.Output label="Results">
+    {JSON.stringify({ results: [{ title: "Paper 1", url: "..." }] }, null, 2)}
+  </ToolCall.Output>
+</ToolCall.Root>
+
+<ToolCall.Root toolName="execute_code" status="running">
+  <ToolCall.Header />
+  <ToolCall.Input>
+    {`console.log("Hello, world!");`}
+  </ToolCall.Input>
+</ToolCall.Root>
+
+<ToolCall.Root toolName="read_file" status="error">
+  <ToolCall.Header />
+  <ToolCall.Output label="Error">File not found: /data/input.csv</ToolCall.Output>
+</ToolCall.Root>
+```
+
+---
+
+### MarkdownRenderer
+
+Streaming-aware markdown rendering. Simple component.
+
+#### Import
+
+```tsx
+import { MarkdownRenderer } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| content | string | — | Markdown string to render |
+| renderCode | (code: string, lang?: string) => ReactNode | — | Custom code block renderer |
+
+Supports: headings, paragraphs, lists, code blocks, inline code, links, blockquotes, bold, italic, tables.
+
+#### Examples
+
+```tsx
+{/* Basic usage */}
+<MarkdownRenderer content={assistantMessage} />
+
+{/* With custom code block renderer */}
+<MarkdownRenderer
+  content={response}
+  renderCode={(code, lang) => (
+    <CodeBlock code={code} language={lang} showLineNumbers />
+  )}
+/>
+```
+
+---
+
+### StatusIndicator
+
+Animated AI status label with letter-by-letter light sweep animation. Simple component.
+
+#### Import
+
+```tsx
+import { StatusIndicator } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| state | "idle" \| "thinking" \| "streaming" \| "tool-calling" \| "error" | — | Current AI state |
+| label | string | — | Custom label (auto-generated from state if omitted) |
+| icon | ReactNode | — | Custom icon |
+| color | "purple" \| "amber" \| "blue" \| "red" \| "gray" | — | Override indicator color |
+| animation | "pulse" \| "sweep" | "sweep" | Animation style |
+
+#### Examples
+
+```tsx
+<StatusIndicator state="idle" />
+<StatusIndicator state="thinking" />
+<StatusIndicator state="streaming" label="Writing response..." />
+<StatusIndicator state="tool-calling" label="Searching the web..." />
+<StatusIndicator state="error" label="Something went wrong" />
+<StatusIndicator state="thinking" animation="pulse" color="blue" />
+```
+
+---
+
+### TokenUsage
+
+Visual token consumption and cost meter. Simple component.
+
+#### Import
+
+```tsx
+import { TokenUsage } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| inputTokens | number | — | Required. Number of input tokens used |
+| outputTokens | number | — | Required. Number of output tokens used |
+| maxTokens | number | — | Required. Maximum token limit |
+| cost | number | — | Dollar cost of the request |
+
+#### Examples
+
+```tsx
+<TokenUsage
+  inputTokens={1500}
+  outputTokens={800}
+  maxTokens={4096}
+/>
+
+<TokenUsage
+  inputTokens={12000}
+  outputTokens={4500}
+  maxTokens={128000}
+  cost={0.0345}
+/>
+```
+
+---
+
+### ModelSelector
+
+Dropdown selector for AI models. Simple component.
+
+#### Import
+
+```tsx
+import { ModelSelector } from "@arc-lo/ui";
+import type { ModelOption } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| models | ModelOption[] | — | Required. Available models |
+| value | string | — | Required. Currently selected model ID |
+| onChange | (modelId: string) => void | — | Required. Called when selection changes |
+
+#### ModelOption Type
+
+```tsx
+type ModelOption = {
+  id: string;
+  name: string;
+  description?: string;
+  badge?: string;
+};
+```
+
+#### Full Example
+
+```tsx
+const models: ModelOption[] = [
+  { id: "claude-sonnet", name: "Claude Sonnet", description: "Fast and capable", badge: "Fast" },
+  { id: "claude-opus", name: "Claude Opus", description: "Most powerful", badge: "New" },
+  { id: "claude-haiku", name: "Claude Haiku", description: "Fastest responses" },
+];
+
+<ModelSelector
+  models={models}
+  value={selectedModel}
+  onChange={setSelectedModel}
+/>
+```
+
+---
+
+### SourceCard
+
+RAG retrieval result card with relevance scoring. Simple component.
+
+#### Import
+
+```tsx
+import { SourceCard } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| title | string | — | Required. Source document title |
+| url | string | — | Link to the source |
+| content | string | — | Required. Snippet or summary text |
+| relevance | number | — | Required. Relevance score from 0 to 1 |
+| variant | "compact" \| "full" | — | Display variant |
+
+#### Examples
+
+```tsx
+<SourceCard
+  title="Attention Is All You Need"
+  url="https://arxiv.org/abs/1706.03762"
+  content="We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
+  relevance={0.95}
+/>
+
+<SourceCard
+  title="React Documentation"
+  url="https://react.dev"
+  content="React lets you build user interfaces out of individual pieces called components."
+  relevance={0.72}
+  variant="compact"
+/>
+```
+
+---
+
+### ChatThread
+
+Conversation container with user, assistant, and system messages. Compound component.
+
+#### Import
+
+```tsx
+import { ChatThread } from "@arc-lo/ui";
+```
+
+#### Parts
+
+| Part | Description |
+|------|-------------|
+| ChatThread.Root | Scrollable container for the conversation. |
+| ChatThread.Messages | Wrapper for message list. |
+| ChatThread.Message | Generic message (requires role prop). |
+| ChatThread.UserMessage | Pre-styled user message bubble. |
+| ChatThread.AssistantMessage | Pre-styled assistant message bubble. |
+| ChatThread.SystemMessage | Pre-styled system/info message. |
+| ChatThread.ScrollAnchor | Auto-scroll anchor placed at end of messages. |
+
+#### Props — ChatThread.Message / UserMessage / AssistantMessage
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| role | "user" \| "assistant" \| "system" | — | Message role (for generic Message) |
+| avatar | ReactNode | — | Avatar element or object |
+| name | string | — | Display name |
+| timestamp | string \| Date | — | Message timestamp |
+
+#### Avatar Object
+
+When passing an avatar object instead of ReactNode:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| src | string | — | Image URL |
+| initials | string | — | Fallback initials |
+| icon | ReactNode | — | Fallback icon |
+| color | string | — | Background color |
+| textColor | string | — | Text color for initials |
+| size | number | 28 | Avatar size in pixels |
+
+#### Full Example
+
+```tsx
+<ChatThread.Root className="h-[600px]">
+  <ChatThread.Messages>
+    <ChatThread.SystemMessage>
+      You are chatting with an AI assistant.
+    </ChatThread.SystemMessage>
+
+    <ChatThread.UserMessage
+      name="Alice"
+      avatar={{ initials: "A", color: "#6C5CE7", textColor: "#fff" }}
+      timestamp="2:30 PM"
+    >
+      What is the transformer architecture?
+    </ChatThread.UserMessage>
+
+    <ChatThread.AssistantMessage
+      name="Claude"
+      avatar={{ src: "/claude-avatar.png" }}
+      timestamp="2:30 PM"
+    >
+      <StreamingText.Root text={response} speed={20}>
+        <StreamingText.Content />
+        <StreamingText.Cursor />
+      </StreamingText.Root>
+    </ChatThread.AssistantMessage>
+
+    <ChatThread.ScrollAnchor />
+  </ChatThread.Messages>
+</ChatThread.Root>
+```
+
+---
+
+### FileAttachment
+
+File preview chips and cards with type icons and upload progress. Simple component.
+
+#### Import
+
+```tsx
+import { FileAttachment } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| name | string | — | Required. File name |
+| size | string | — | Human-readable file size (e.g., "2.4 MB") |
+| type | "image" \| "pdf" \| "code" \| "text" \| "csv" \| "other" | — | File type (determines icon) |
+| preview | ReactNode | — | Preview content (e.g., image thumbnail) |
+| progress | number | — | Upload progress from 0 to 100 |
+| onRemove | () => void | — | Called when remove button is clicked |
+| variant | "chip" \| "card" | — | Display variant |
+
+#### Examples
+
+```tsx
+{/* Chip variant (compact, inline) */}
+<FileAttachment
+  name="report.pdf"
+  size="2.4 MB"
+  type="pdf"
+  onRemove={() => removeFile("report.pdf")}
+  variant="chip"
+/>
+
+{/* Card variant (larger, with preview) */}
+<FileAttachment
+  name="screenshot.png"
+  size="1.2 MB"
+  type="image"
+  preview={<img src="/thumb.png" alt="Preview" />}
+  variant="card"
+/>
+
+{/* With upload progress */}
+<FileAttachment
+  name="data.csv"
+  size="5.1 MB"
+  type="csv"
+  progress={45}
+  onRemove={() => cancelUpload("data.csv")}
+/>
+```
+
+---
+
+### CodeBlock
+
+Code display with copy button, line numbers, and language badge. Simple component.
+
+#### Import
+
+```tsx
+import { CodeBlock } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| code | string | — | Required. Code string to display |
+| language | string | — | Programming language (shown as badge, used for highlighting) |
+| showLineNumbers | boolean | false | Show line numbers |
+| maxHeight | string | "400px" | Max height before scrolling |
+| onCopy | () => void | — | Called after code is copied |
+
+#### Examples
+
+```tsx
+<CodeBlock
+  code={`function hello() {\n  console.log("Hello, world!");\n}`}
+  language="typescript"
+  showLineNumbers
+/>
+
+<CodeBlock
+  code={pythonCode}
+  language="python"
+  maxHeight="600px"
+  onCopy={() => toast("Copied!")}
+/>
+```
+
+---
+
+### ConversationBranch
+
+Branch navigation for regenerated responses. Simple component.
+
+#### Import
+
+```tsx
+import { ConversationBranch } from "@arc-lo/ui";
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| current | number | — | Required. Current branch index (1-based) |
+| total | number | — | Required. Total number of branches |
+| onPrevious | () => void | — | Called when previous button is clicked |
+| onNext | () => void | — | Called when next button is clicked |
+
+#### Example
+
+```tsx
+<ConversationBranch
+  current={2}
+  total={3}
+  onPrevious={() => setBranch(branch - 1)}
+  onNext={() => setBranch(branch + 1)}
+/>
+```
+
+---
+
+### SuggestTopics
+
+Starter prompt cards for empty chat states. Compound component.
+
+#### Import
+
+```tsx
+import { SuggestTopics, TopicCard } from "@arc-lo/ui";
+```
+
+#### Props — SuggestTopics
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | "grid" \| "compact" | — | Layout variant |
+| columns | 1 \| 2 \| 3 | — | Number of grid columns |
+
+#### Props — TopicCard
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| title | string | — | Required. Topic title |
+| description | string | — | Topic description |
+| icon | ReactNode | — | Icon or emoji |
+| onSelect | (title: string) => void | — | Called when card is clicked |
+| variant | "card" \| "compact" | — | Display variant |
+
+#### Examples
+
+```tsx
+{/* Grid layout */}
+<SuggestTopics variant="grid" columns={2}>
+  <TopicCard
+    icon="✍️"
+    title="Write a blog post"
+    description="About AI design systems"
+    onSelect={(title) => setPrompt(title)}
+  />
+  <TopicCard
+    icon="🔍"
+    title="Research a topic"
+    description="Deep dive into any subject"
+    onSelect={(title) => setPrompt(title)}
+  />
+  <TopicCard
+    icon="💻"
+    title="Debug my code"
+    description="Paste code and get help"
+    onSelect={(title) => setPrompt(title)}
+  />
+  <TopicCard
+    icon="📊"
+    title="Analyze data"
+    description="Upload a CSV or describe your data"
+    onSelect={(title) => setPrompt(title)}
+  />
+</SuggestTopics>
+
+{/* Compact layout */}
+<SuggestTopics variant="compact">
+  <TopicCard variant="compact" icon="🔍" title="Search" onSelect={handle} />
+  <TopicCard variant="compact" icon="✍️" title="Write" onSelect={handle} />
+  <TopicCard variant="compact" icon="💡" title="Brainstorm" onSelect={handle} />
+</SuggestTopics>
+```
+
+---
+
+### ImageGen
+
+Image generation with blur reveal, progress bar, and 5 lifecycle states. Compound component.
+
+#### Import
+
+```tsx
+import { ImageGen } from "@arc-lo/ui";
+```
+
+#### Parts
+
+| Part | Description |
+|------|-------------|
+| ImageGen.Root | Provider. Manages generation state and layout. |
+| ImageGen.Placeholder | Shown in idle state. |
+| ImageGen.Preview | Renders the generated image with optional blur reveal. |
+| ImageGen.Progress | Progress bar during generation. |
+| ImageGen.Overlay | Overlay label on image. |
+| ImageGen.ErrorFallback | Error display. |
+| ImageGen.Toolbar | Action bar for download/retry buttons. |
+| ImageGen.Download | Download button. |
+| ImageGen.Retry | Retry button. |
+
+#### Props — ImageGen.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| state | ImageGenState | — | Required. Current generation state |
+| src | string | — | Generated image URL |
+| alt | string | — | Alt text for the image |
+| aspectRatio | string | "1/1" | CSS aspect ratio |
+| prompt | string | — | Generation prompt (for display) |
+| onRetry | () => void | — | Retry callback |
+| onDownload | () => void | — | Download callback |
+| blurReveal | boolean | true | Animate blur-to-clear on done |
+
+#### Props — ImageGen.Progress
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| progress | number | — | Progress percentage (0-100) |
+
+#### Props — ImageGen.Overlay
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| label | string | — | Overlay label text |
+
+#### Props — ImageGen.ErrorFallback
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| message | string | — | Error message |
+
+#### States
+
+`ImageGenState = "idle" | "pending" | "generating" | "done" | "error"`
+
+#### Full Example
+
+```tsx
+<ImageGen.Root
+  state={genState}
+  src={imageUrl}
+  alt="A serene mountain landscape at sunset"
+  aspectRatio="16/9"
+  prompt="A serene mountain landscape at sunset, digital art"
+  blurReveal
+  onRetry={() => regenerate()}
+  onDownload={() => downloadImage(imageUrl)}
+>
+  <ImageGen.Placeholder />
+  <ImageGen.Preview />
+  <ImageGen.Progress progress={progress} />
+  <ImageGen.Overlay label="Generating your image..." />
+  <ImageGen.ErrorFallback message="Generation failed. Please try again." />
+  <ImageGen.Toolbar>
+    <ImageGen.Download />
+    <ImageGen.Retry />
+  </ImageGen.Toolbar>
+</ImageGen.Root>
+```
+
+---
+
+### VideoGen
+
+Video generation with stages, progress, player, and 6 lifecycle states. Compound component.
+
+#### Import
+
+```tsx
+import { VideoGen } from "@arc-lo/ui";
+```
+
+#### Parts
+
+| Part | Description |
+|------|-------------|
+| VideoGen.Root | Provider. Manages generation state and playback. |
+| VideoGen.Placeholder | Shown in idle state. |
+| VideoGen.Thumbnail | Poster image before playback. |
+| VideoGen.Player | Video player element. |
+| VideoGen.Progress | Progress bar during generation. |
+| VideoGen.StageLabel | Label showing current generation stage. |
+| VideoGen.PlayButton | Play button overlay on thumbnail. |
+| VideoGen.ErrorFallback | Error display. |
+| VideoGen.Toolbar | Action bar for controls. |
+
+#### Props — VideoGen.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| state | VideoGenState | — | Required. Current generation state |
+| src | string | — | Generated video URL |
+| poster | string | — | Poster/thumbnail image URL |
+| progress | number | — | Generation progress (0-100) |
+| aspectRatio | string | "16/9" | CSS aspect ratio |
+| duration | number | — | Video duration in seconds |
+| prompt | string | — | Generation prompt (for display) |
+| onRetry | () => void | — | Retry callback |
+| onDownload | () => void | — | Download callback |
+| onPlay | () => void | — | Called when video plays |
+
+#### Props — VideoGen.Player
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| autoPlay | boolean | — | Auto-play on done |
+| loop | boolean | — | Loop playback |
+| muted | boolean | — | Muted playback |
+
+#### Props — VideoGen.StageLabel
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| label | string | — | Custom stage label |
+
+#### Props — VideoGen.ErrorFallback
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| message | string | — | Error message |
+
+#### States
+
+`VideoGenState = "idle" | "queued" | "processing" | "rendering" | "done" | "error"`
+
+#### Full Example
+
+```tsx
+<VideoGen.Root
+  state={genState}
+  src={videoUrl}
+  poster={thumbnailUrl}
+  progress={progress}
+  aspectRatio="16/9"
+  duration={15}
+  prompt="A cat playing piano, cinematic"
+  onRetry={() => regenerate()}
+  onDownload={() => downloadVideo()}
+  onPlay={() => trackPlay()}
+>
+  <VideoGen.Placeholder />
+  <VideoGen.Thumbnail />
+  <VideoGen.Player autoPlay={false} loop muted />
+  <VideoGen.Progress />
+  <VideoGen.StageLabel label="Rendering frames..." />
+  <VideoGen.PlayButton />
+  <VideoGen.ErrorFallback message="Video generation failed." />
+  <VideoGen.Toolbar />
+</VideoGen.Root>
+```
+
+---
+
+## Full Application Examples
+
+### Example 1: Simple Chatbot
+
+A complete chatbot with streaming responses, feedback, and starter topics.
+
+```tsx
+import {
+  ChatThread,
+  StreamingText,
+  PromptBox,
+  FeedbackBar,
+  SuggestTopics,
+  TopicCard,
+  StatusIndicator,
+  useStreamingText,
+} from "@arc-lo/ui";
+import { useState } from "react";
+
+function Chatbot() {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [currentResponse, setCurrentResponse] = useState("");
+  const [aiState, setAiState] = useState("idle");
+
+  async function handleSubmit(value) {
+    setMessages((prev) => [...prev, { role: "user", content: value }]);
+    setInput("");
+    setIsStreaming(true);
+    setAiState("thinking");
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ message: value }),
+    });
+
+    setAiState("streaming");
+    const text = await response.text();
+    setCurrentResponse(text);
+  }
+
+  function handleDone() {
+    setMessages((prev) => [...prev, { role: "assistant", content: currentResponse }]);
+    setCurrentResponse("");
+    setIsStreaming(false);
+    setAiState("idle");
+  }
+
+  const isEmpty = messages.length === 0 && !isStreaming;
+
+  return (
+    <div className="flex flex-col h-screen max-w-2xl mx-auto">
+      <StatusIndicator state={aiState} />
+
+      <ChatThread.Root className="flex-1">
+        <ChatThread.Messages>
+          {isEmpty && (
+            <SuggestTopics variant="grid" columns={2}>
+              <TopicCard
+                icon="✍️"
+                title="Write a story"
+                description="Creative fiction or non-fiction"
+                onSelect={(title) => handleSubmit(title)}
+              />
+              <TopicCard
+                icon="🔍"
+                title="Research a topic"
+                description="Deep dive into any subject"
+                onSelect={(title) => handleSubmit(title)}
+              />
+              <TopicCard
+                icon="💡"
+                title="Brainstorm ideas"
+                description="Generate creative solutions"
+                onSelect={(title) => handleSubmit(title)}
+              />
+              <TopicCard
+                icon="📝"
+                title="Summarize text"
+                description="Condense long documents"
+                onSelect={(title) => handleSubmit(title)}
+              />
+            </SuggestTopics>
+          )}
+
+          {messages.map((msg, i) =>
+            msg.role === "user" ? (
+              <ChatThread.UserMessage key={i} name="You">
+                {msg.content}
+              </ChatThread.UserMessage>
+            ) : (
+              <ChatThread.AssistantMessage key={i} name="Claude">
+                {msg.content}
+                <FeedbackBar.Root onFeedback={(v) => trackFeedback(i, v)}>
+                  <FeedbackBar.ThumbsUp />
+                  <FeedbackBar.ThumbsDown />
+                  <FeedbackBar.Copy text={msg.content} />
+                  <FeedbackBar.Regenerate onRegenerate={() => regenerate(i)} />
+                </FeedbackBar.Root>
+              </ChatThread.AssistantMessage>
+            )
+          )}
+
+          {isStreaming && (
+            <ChatThread.AssistantMessage name="Claude">
+              <StreamingText.Root text={currentResponse} speed={20} onDone={handleDone}>
+                <StreamingText.Skeleton lines={3} />
+                <StreamingText.Content />
+                <StreamingText.Cursor />
+                <StreamingText.Stop />
+              </StreamingText.Root>
+            </ChatThread.AssistantMessage>
+          )}
+
+          <ChatThread.ScrollAnchor />
+        </ChatThread.Messages>
+      </ChatThread.Root>
+
+      <PromptBox.Root
+        value={input}
+        onValueChange={setInput}
+        onSubmit={handleSubmit}
+        isSubmitting={isStreaming}
+      >
+        <PromptBox.Input placeholder="Ask anything..." />
+        <PromptBox.Footer>
+          <PromptBox.SubmitButton />
+        </PromptBox.Footer>
+      </PromptBox.Root>
+    </div>
+  );
+}
+```
+
+---
+
+### Example 2: RAG Assistant
+
+A retrieval-augmented generation assistant with citations, source cards, and confidence indicators.
+
+```tsx
+import {
+  ChatThread,
+  StreamingText,
+  PromptBox,
+  CitationInline,
+  CitationGroup,
+  SourceCard,
+  ConfidenceBadge,
+  FeedbackBar,
+} from "@arc-lo/ui";
+import { useState } from "react";
+
+function RAGAssistant() {
+  const [messages, setMessages] = useState([]);
+  const [sources, setSources] = useState([]);
+  const [input, setInput] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  async function handleSubmit(value) {
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", content: value }]);
+    setIsStreaming(true);
+
+    const res = await fetch("/api/rag", {
+      method: "POST",
+      body: JSON.stringify({ query: value }),
+    });
+    const data = await res.json();
+
+    setSources(data.sources);
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content: data.answer,
+        sources: data.sources,
+        confidence: data.confidence,
+      },
+    ]);
+    setIsStreaming(false);
+  }
+
+  return (
+    <div className="flex h-screen max-w-4xl mx-auto">
+      {/* Main chat */}
+      <div className="flex-1 flex flex-col">
+        <ChatThread.Root className="flex-1">
+          <ChatThread.Messages>
+            {messages.map((msg, i) =>
+              msg.role === "user" ? (
+                <ChatThread.UserMessage key={i} name="You">
+                  {msg.content}
+                </ChatThread.UserMessage>
+              ) : (
+                <ChatThread.AssistantMessage key={i} name="Research Assistant">
+                  <ConfidenceBadge level={msg.confidence} />
+
+                  <p>
+                    The transformer architecture introduced self-attention
+                    <CitationInline
+                      index={1}
+                      href={msg.sources?.[0]?.url}
+                      sourceTitle={msg.sources?.[0]?.title}
+                      preview={msg.sources?.[0]?.content}
+                    />
+                    which replaced recurrent layers entirely
+                    <CitationGroup>
+                      <CitationInline index={2} sourceTitle={msg.sources?.[1]?.title} />
+                      <CitationInline index={3} sourceTitle={msg.sources?.[2]?.title} />
+                    </CitationGroup>
+                  </p>
+
+                  <FeedbackBar.Root onFeedback={(v) => trackFeedback(i, v)}>
+                    <FeedbackBar.ThumbsUp />
+                    <FeedbackBar.ThumbsDown />
+                    <FeedbackBar.Copy text={msg.content} />
+                  </FeedbackBar.Root>
+                </ChatThread.AssistantMessage>
+              )
+            )}
+            <ChatThread.ScrollAnchor />
+          </ChatThread.Messages>
+        </ChatThread.Root>
+
+        <PromptBox.Root value={input} onValueChange={setInput} onSubmit={handleSubmit} isSubmitting={isStreaming}>
+          <PromptBox.Input placeholder="Ask about your documents..." />
+          <PromptBox.Footer>
+            <PromptBox.SubmitButton />
+          </PromptBox.Footer>
+        </PromptBox.Root>
+      </div>
+
+      {/* Source panel */}
+      <aside className="w-80 border-l border-[var(--arclo-border)] p-4 overflow-y-auto">
+        <h2 className="text-sm font-semibold mb-3 text-[var(--arclo-text-secondary)]">Sources</h2>
+        <div className="space-y-3">
+          {sources.map((source, i) => (
+            <SourceCard
+              key={i}
+              title={source.title}
+              url={source.url}
+              content={source.content}
+              relevance={source.relevance}
+              variant="compact"
+            />
+          ))}
+        </div>
+      </aside>
+    </div>
+  );
+}
+```
+
+---
+
+### Example 3: Coding Agent
+
+A coding assistant with thinking blocks, tool calls, code blocks, token usage, and model selection.
+
+```tsx
+import {
+  ChatThread,
+  StreamingText,
+  PromptBox,
+  ThinkingBlock,
+  ToolCall,
+  CodeBlock,
+  TokenUsage,
+  ModelSelector,
+  StatusIndicator,
+  FeedbackBar,
+  FileAttachment,
+  ConversationBranch,
+} from "@arc-lo/ui";
+import type { ModelOption } from "@arc-lo/ui";
+import { useState } from "react";
+
+const models: ModelOption[] = [
+  { id: "claude-sonnet", name: "Claude Sonnet", description: "Fast and capable", badge: "Fast" },
+  { id: "claude-opus", name: "Claude Opus", description: "Most powerful", badge: "Best" },
+];
+
+function CodingAgent() {
+  const [selectedModel, setSelectedModel] = useState("claude-sonnet");
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [aiState, setAiState] = useState("idle");
+  const [tokenData, setTokenData] = useState(null);
+
+  async function handleSubmit(value) {
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", content: value }]);
+    setAiState("thinking");
+
+    const res = await fetch("/api/code-agent", {
+      method: "POST",
+      body: JSON.stringify({ message: value, model: selectedModel }),
+    });
+    const data = await res.json();
+
+    setAiState("idle");
+    setTokenData(data.usage);
+    setMessages((prev) => [...prev, { role: "assistant", ...data }]);
+  }
+
+  return (
+    <div className="flex flex-col h-screen max-w-3xl mx-auto">
+      <header className="flex items-center justify-between p-4 border-b border-[var(--arclo-border)]">
+        <ModelSelector models={models} value={selectedModel} onChange={setSelectedModel} />
+        <StatusIndicator state={aiState} />
+      </header>
+
+      <ChatThread.Root className="flex-1">
+        <ChatThread.Messages>
+          {messages.map((msg, i) =>
+            msg.role === "user" ? (
+              <ChatThread.UserMessage key={i} name="Developer">
+                {msg.content}
+              </ChatThread.UserMessage>
+            ) : (
+              <ChatThread.AssistantMessage key={i} name="Coding Agent">
+                {/* Thinking block */}
+                {msg.thinking && (
+                  <ThinkingBlock.Root state="done" duration={msg.thinkingDuration} collapseOnDone>
+                    <ThinkingBlock.Trigger label="Reasoning" />
+                    <ThinkingBlock.Content>{msg.thinking}</ThinkingBlock.Content>
+                  </ThinkingBlock.Root>
+                )}
+
+                {/* Tool calls */}
+                {msg.toolCalls?.map((tool, j) => (
+                  <ToolCall.Root key={j} toolName={tool.name} status={tool.status} defaultOpen={tool.status === "error"}>
+                    <ToolCall.Header />
+                    <ToolCall.Input>{JSON.stringify(tool.input, null, 2)}</ToolCall.Input>
+                    <ToolCall.Output>{JSON.stringify(tool.output, null, 2)}</ToolCall.Output>
+                  </ToolCall.Root>
+                ))}
+
+                {/* Response with code */}
+                <StreamingText.Root text={msg.content}>
+                  <StreamingText.Content
+                    render={(text) => (
+                      <div>
+                        <p>{text}</p>
+                        {msg.code && (
+                          <CodeBlock
+                            code={msg.code}
+                            language={msg.language}
+                            showLineNumbers
+                            onCopy={() => toast("Copied!")}
+                          />
+                        )}
+                      </div>
+                    )}
+                  />
+                </StreamingText.Root>
+
+                {/* File attachments from tool results */}
+                {msg.files?.map((file, j) => (
+                  <FileAttachment key={j} name={file.name} type={file.type} size={file.size} variant="chip" />
+                ))}
+
+                {/* Branch navigation for regenerated responses */}
+                {msg.branches > 1 && (
+                  <ConversationBranch
+                    current={msg.currentBranch}
+                    total={msg.branches}
+                    onPrevious={() => switchBranch(i, -1)}
+                    onNext={() => switchBranch(i, 1)}
+                  />
+                )}
+
+                <FeedbackBar.Root onFeedback={(v) => trackFeedback(i, v)}>
+                  <FeedbackBar.ThumbsUp />
+                  <FeedbackBar.ThumbsDown />
+                  <FeedbackBar.Copy text={msg.content} />
+                  <FeedbackBar.Regenerate onRegenerate={() => regenerate(i)} />
+                </FeedbackBar.Root>
+              </ChatThread.AssistantMessage>
+            )
+          )}
+          <ChatThread.ScrollAnchor />
+        </ChatThread.Messages>
+      </ChatThread.Root>
+
+      {tokenData && (
+        <TokenUsage
+          inputTokens={tokenData.input}
+          outputTokens={tokenData.output}
+          maxTokens={tokenData.max}
+          cost={tokenData.cost}
+        />
+      )}
+
+      <PromptBox.Root value={input} onValueChange={setInput} onSubmit={handleSubmit} isSubmitting={aiState !== "idle"}>
+        <PromptBox.Input placeholder="Describe what you want to build..." minRows={2} />
+        <PromptBox.Footer>
+          <PromptBox.SubmitButton variant="icon-text" />
+        </PromptBox.Footer>
+      </PromptBox.Root>
+    </div>
+  );
+}
+```
+
+---
+
+### Example 4: Image Generation App
+
+Complete image generation flow with all states.
+
+```tsx
+import { ImageGen, PromptBox, StatusIndicator } from "@arc-lo/ui";
+import { useState } from "react";
+
+function ImageGenerationApp() {
+  const [genState, setGenState] = useState("idle");
+  const [imageUrl, setImageUrl] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [prompt, setPrompt] = useState("");
+
+  async function handleGenerate(value) {
+    setPrompt(value);
+    setGenState("pending");
+
+    try {
+      setGenState("generating");
+
+      const res = await fetch("/api/generate-image", {
+        method: "POST",
+        body: JSON.stringify({ prompt: value }),
+      });
+
+      // Simulate progress updates
+      const reader = res.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const data = JSON.parse(new TextDecoder().decode(value));
+        setProgress(data.progress);
+      }
+
+      const result = await res.json();
+      setImageUrl(result.url);
+      setGenState("done");
+    } catch (err) {
+      setGenState("error");
+    }
+  }
+
+  function handleRetry() {
+    handleGenerate(prompt);
+  }
+
+  function handleDownload() {
+    const a = document.createElement("a");
+    a.href = imageUrl;
+    a.download = "generated-image.png";
+    a.click();
+  }
+
+  return (
+    <div className="max-w-lg mx-auto p-6 space-y-6">
+      <StatusIndicator
+        state={genState === "generating" ? "streaming" : genState === "pending" ? "thinking" : "idle"}
+        label={genState === "generating" ? "Generating..." : undefined}
+      />
+
+      <ImageGen.Root
+        state={genState}
+        src={imageUrl}
+        alt={prompt}
+        aspectRatio="1/1"
+        prompt={prompt}
+        blurReveal
+        onRetry={handleRetry}
+        onDownload={handleDownload}
+      >
+        <ImageGen.Placeholder />
+        <ImageGen.Preview />
+        <ImageGen.Progress progress={progress} />
+        <ImageGen.Overlay label="Creating your image..." />
+        <ImageGen.ErrorFallback message="Image generation failed. Please try again." />
+        <ImageGen.Toolbar>
+          <ImageGen.Download />
+          <ImageGen.Retry />
+        </ImageGen.Toolbar>
+      </ImageGen.Root>
+
+      <PromptBox.Root onSubmit={handleGenerate} isSubmitting={genState === "pending" || genState === "generating"}>
+        <PromptBox.Input placeholder="Describe the image you want to create..." />
+        <PromptBox.Suggestions
+          suggestions={[
+            "A cyberpunk city at night",
+            "Oil painting of a sunset over mountains",
+            "Minimalist logo for a tech startup",
+          ]}
+          onSelect={(s) => handleGenerate(s)}
+        />
+        <PromptBox.Footer>
+          <PromptBox.SubmitButton variant="icon-text" loadingLabel="Generating..." />
+        </PromptBox.Footer>
+      </PromptBox.Root>
+    </div>
+  );
+}
+```
+
+---
+
+### Example 5: Video Generation App
+
+Complete video generation flow with all states and playback.
+
+```tsx
+import { VideoGen, PromptBox, StatusIndicator } from "@arc-lo/ui";
+import { useState } from "react";
+
+function VideoGenerationApp() {
+  const [genState, setGenState] = useState("idle");
+  const [videoUrl, setVideoUrl] = useState(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [prompt, setPrompt] = useState("");
+  const [stageLabel, setStageLabel] = useState("");
+
+  async function handleGenerate(value) {
+    setPrompt(value);
+    setGenState("queued");
+    setStageLabel("Queued...");
+
+    try {
+      const res = await fetch("/api/generate-video", {
+        method: "POST",
+        body: JSON.stringify({ prompt: value }),
+      });
+
+      const reader = res.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const data = JSON.parse(new TextDecoder().decode(value));
+
+        setGenState(data.state);
+        setProgress(data.progress);
+
+        if (data.state === "processing") setStageLabel("Processing prompt...");
+        if (data.state === "rendering") setStageLabel("Rendering frames...");
+        if (data.thumbnail) setThumbnailUrl(data.thumbnail);
+      }
+
+      const result = await res.json();
+      setVideoUrl(result.url);
+      setGenState("done");
+    } catch (err) {
+      setGenState("error");
+    }
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto p-6 space-y-6">
+      <StatusIndicator
+        state={
+          genState === "queued" ? "thinking" :
+          genState === "processing" || genState === "rendering" ? "streaming" :
+          "idle"
+        }
+      />
+
+      <VideoGen.Root
+        state={genState}
+        src={videoUrl}
+        poster={thumbnailUrl}
+        progress={progress}
+        aspectRatio="16/9"
+        duration={15}
+        prompt={prompt}
+        onRetry={() => handleGenerate(prompt)}
+        onDownload={() => downloadVideo(videoUrl)}
+        onPlay={() => trackPlay()}
+      >
+        <VideoGen.Placeholder />
+        <VideoGen.Thumbnail />
+        <VideoGen.Player autoPlay={false} loop muted />
+        <VideoGen.Progress />
+        <VideoGen.StageLabel label={stageLabel} />
+        <VideoGen.PlayButton />
+        <VideoGen.ErrorFallback message="Video generation failed. Please try again." />
+        <VideoGen.Toolbar />
+      </VideoGen.Root>
+
+      <PromptBox.Root
+        onSubmit={handleGenerate}
+        isSubmitting={["queued", "processing", "rendering"].includes(genState)}
+      >
+        <PromptBox.Input placeholder="Describe the video you want to create..." />
+        <PromptBox.Suggestions
+          suggestions={[
+            "A cat playing piano, cinematic",
+            "Timelapse of a flower blooming",
+            "Abstract geometric shapes morphing",
+          ]}
+          onSelect={(s) => handleGenerate(s)}
+        />
+        <PromptBox.Footer>
+          <PromptBox.SubmitButton variant="icon-text" loadingLabel="Generating..." />
+        </PromptBox.Footer>
+      </PromptBox.Root>
+    </div>
+  );
+}
+```
+
+---
+
+## Exported Types
+
+```tsx
+import type {
+  // States
+  StreamingState,        // "pending" | "streaming" | "done" | "interrupted" | "error" | "ratelimit"
+  ConfidenceLevel,       // "high" | "medium" | "low" | "unknown"
+  ChunkSize,             // "char" | "word" | "line"
+  ImageGenState,         // "idle" | "pending" | "generating" | "done" | "error"
+  VideoGenState,         // "idle" | "queued" | "processing" | "rendering" | "done" | "error"
+  ThinkingState,         // "thinking" | "done" | "error"
+  ToolCallStatus,        // "pending" | "running" | "success" | "error"
+  StatusIndicatorState,  // "idle" | "thinking" | "streaming" | "tool-calling" | "error"
+  MessageRole,           // "user" | "assistant" | "system"
+  FileAttachmentType,    // "image" | "pdf" | "code" | "text" | "csv" | "other"
+
+  // Props
+  ImageGenRootProps,
+  VideoGenRootProps,
+  UseStreamingTextOptions,
+  UseStreamingTextReturn,
+  ConfidenceBadgeProps,
+  CitationInlineProps,
+  CitationGroupProps,
+  RefusalCardProps,
+  ThinkingBlockRootProps,
+  ToolCallRootProps,
+  MarkdownRendererProps,
+  StatusIndicatorProps,
+  TokenUsageProps,
+  ModelSelectorProps,
+  ModelOption,
+  SourceCardProps,
+  ChatThreadRootProps,
+  ChatThreadMessageProps,
+  FileAttachmentProps,
+  CodeBlockProps,
+  ConversationBranchProps,
+  SuggestTopicsProps,
+  TopicCardProps,
+} from "@arc-lo/ui";
+```
+
+---
+
+## Links
+
+- Docs: https://arc-lo.com/docs
+- GitHub: https://github.com/arc-lo/ui
+- npm: https://www.npmjs.com/package/@arc-lo/ui

@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "arclo — AI-native design system for React",
+  description:
+    "20 React components for building AI interfaces. Streaming text, prompts, confidence badges, thinking blocks, tool calls, image/video generation. Built on Radix. Works with shadcn/ui.",
+};
 import { ThemeToggle } from "../components/theme-toggle";
 import { ThemePicker } from "../components/theme-picker";
 import { SiteSearch } from "../components/site-search";

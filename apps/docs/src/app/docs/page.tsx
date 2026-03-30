@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Getting Started",
+  description:
+    "Install @arc-lo/ui, set up Tailwind CSS, and start building AI interfaces with 20 components.",
+};
 import { CodeBlock } from "@/components/code-block";
 import { InfoTable } from "@/components/props-table";
 
