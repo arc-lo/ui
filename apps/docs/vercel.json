@@ -1,4 +1,5 @@
 {
-  "installCommand": "cd ../.. && npm install && npm run build -w packages/react",
+  "installCommand": "cd ../.. && pnpm install && pnpm --filter @arc-lo/ui build",
+  "buildCommand": "next build",
   "framework": "nextjs"
 }
