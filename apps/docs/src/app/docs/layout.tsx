@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ThemePicker } from "@/components/theme-picker";
 import { SiteSearch } from "@/components/site-search";
+import { SidebarNav } from "@/components/sidebar-nav";
 
 const nav = [
   {
@@ -93,31 +94,7 @@ export default function DocsLayout({
           className="hidden w-56 shrink-0 border-r py-8 pr-6 md:block"
           style={{ borderColor: "var(--docs-sidebar-border)" }}
         >
-          <div className="space-y-6">
-            {nav.map((section) => (
-              <div key={section.title}>
-                <p
-                  className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--docs-muted)" }}
-                >
-                  {section.title}
-                </p>
-                <ul className="space-y-1">
-                  {section.items.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className="block rounded-md px-3 py-1.5 text-sm transition-colors"
-                        style={{ color: "var(--docs-body)" }}
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <SidebarNav nav={nav} />
         </aside>
 
         {/* Content */}
