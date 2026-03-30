@@ -7,6 +7,8 @@ export * as FeedbackBar from "./feedback-bar";
 export * as ThinkingBlock from "./thinking-block";
 export * as ToolCall from "./tool-call";
 export * as ChatThread from "./chat-thread";
+export * as ImageGen from "./image-gen";
+export * as VideoGen from "./video-gen";
 
 export { ConfidenceBadge } from "./confidence-badge";
 export { CitationInline, CitationGroup } from "./citation-inline";
@@ -25,7 +27,9 @@ export { SuggestTopics, TopicCard } from "./suggest-topics";
 export { useStreamingText } from "./streaming-text";
 
 // Types
-export type { StreamingState, ConfidenceLevel, ChunkSize } from "./lib/types";
+export type { StreamingState, ConfidenceLevel, ChunkSize, ImageGenState, VideoGenState } from "./lib/types";
+export type { ImageGenRootProps } from "./image-gen";
+export type { VideoGenRootProps } from "./video-gen";
 export type { UseStreamingTextOptions, UseStreamingTextReturn } from "./streaming-text";
 export type { ConfidenceBadgeProps } from "./confidence-badge";
 export type { CitationInlineProps, CitationGroupProps } from "./citation-inline";

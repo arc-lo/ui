@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { ThemeToggle } from "../components/theme-toggle";
+import { ThemePicker } from "../components/theme-picker";
+import { SiteSearch } from "../components/site-search";
+import { AnimateOnScroll } from "../components/animate-on-scroll";
+import { HeroChat } from "../components/hero-chat";
 
 const components = [
   {
@@ -105,7 +109,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link href="/" className="flex items-baseline gap-0.5 text-xl tracking-tight">
             <span className="font-semibold" style={{ color: "var(--docs-heading)" }}>arc</span>
-            <span className="font-semibold" style={{ color: "var(--arclo-accent, #6C5CE7)" }}>lo</span>
+            <span className="font-semibold" style={{ color: "var(--arclo-accent, #1a1a1a)" }}>lo</span>
           </Link>
           <div className="flex items-center gap-6 text-sm" style={{ color: "var(--docs-muted)" }}>
             <Link href="/docs" className="hover:opacity-80">Docs</Link>
@@ -117,44 +121,51 @@ export default function Home() {
             >
               GitHub
             </a>
+            <SiteSearch />
+            <ThemePicker />
             <ThemeToggle />
           </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="mx-auto max-w-5xl px-6 py-24">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl" style={{ color: "var(--docs-heading)" }}>
-            AI-native components
-            <br />
-            <span style={{ color: "var(--arclo-accent, #6C5CE7)" }}>for React</span>
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed" style={{ color: "var(--docs-body)" }}>
-            18 primitives every AI product needs — streaming, prompts,
-            confidence, feedback, citations, refusals, thinking blocks, tool
-            calls, markdown, status indicators, token usage, model selection,
-            source cards, and chat threads. Built on Radix conventions.
-            Themeable. Works with shadcn/ui.
-          </p>
-          <div className="mt-8 flex gap-4">
-            <Link
-              href="/docs"
-              className="rounded-lg px-5 py-2.5 text-sm font-medium text-white hover:brightness-90"
-              style={{ backgroundColor: "var(--arclo-accent, #6C5CE7)" }}
-            >
-              Get started
-            </Link>
-            <code
-              className="flex items-center rounded-lg border px-4 py-2.5 text-sm"
-              style={{
-                backgroundColor: "var(--docs-code-bg)",
-                borderColor: "var(--docs-card-border)",
-                color: "var(--docs-body)",
-              }}
-            >
-              npm i @arc-lo/ui
-            </code>
+      <section className="mx-auto max-w-5xl px-6 py-16">
+        <div className="flex flex-col lg:flex-row items-start gap-12">
+          <div className="max-w-lg flex-shrink-0">
+            <h1 className="hero-animate-1 text-4xl font-bold tracking-tight sm:text-5xl" style={{ color: "var(--docs-heading)" }}>
+              AI-native components
+              <br />
+              <span style={{ color: "var(--arclo-accent, #1a1a1a)" }}>for React</span>
+            </h1>
+            <p className="hero-animate-2 mt-6 text-lg leading-relaxed" style={{ color: "var(--docs-body)" }}>
+              18 primitives every AI product needs — streaming, prompts,
+              confidence, feedback, citations, refusals, thinking blocks, tool
+              calls, markdown, status indicators, token usage, model selection,
+              source cards, and chat threads. Built on Radix conventions.
+              Themeable. Works with shadcn/ui.
+            </p>
+            <div className="hero-animate-3 mt-8 flex gap-4">
+              <Link
+                href="/docs"
+                className="rounded-lg px-5 py-2.5 text-sm font-medium hover:brightness-90"
+                style={{ backgroundColor: "var(--arclo-accent, #1a1a1a)", color: "var(--arclo-accent-fg, #ffffff)" }}
+              >
+                Get started
+              </Link>
+              <code
+                className="flex items-center rounded-lg border px-4 py-2.5 text-sm"
+                style={{
+                  backgroundColor: "var(--docs-code-bg)",
+                  borderColor: "var(--docs-card-border)",
+                  color: "var(--docs-body)",
+                }}
+              >
+                npm i @arc-lo/ui
+              </code>
+            </div>
+          </div>
+          <div className="hero-animate-4 hidden lg:block flex-1 min-w-0">
+            <HeroChat />
           </div>
         </div>
       </section>
@@ -164,24 +175,24 @@ export default function Home() {
         <h2 className="mb-8 text-sm font-medium uppercase tracking-wider" style={{ color: "var(--docs-muted)" }}>
           Components
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {components.map((c) => (
+        <AnimateOnScroll className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {components.map((c, i) => (
             <Link
               key={c.name}
               href={c.href}
-              className="group rounded-xl border p-6 transition-all hover:scale-[1.01]"
-              style={{ borderColor: "var(--docs-card-border)", backgroundColor: "var(--docs-card-bg)" }}
+              className="card-reveal group rounded-xl border p-6 transition-all hover:scale-[1.01]"
+              style={{ borderColor: "var(--docs-card-border)", backgroundColor: "var(--docs-card-bg)", transitionDelay: `${i * 50}ms` }}
             >
               <h3 className="font-mono text-sm font-semibold" style={{ color: "var(--docs-heading)" }}>
                 <span className="group-hover:hidden">{"<"}{c.name}{" />"}</span>
-                <span className="hidden group-hover:inline" style={{ color: "var(--arclo-accent, #6C5CE7)" }}>{"<"}{c.name}{" />"}</span>
+                <span className="hidden group-hover:inline" style={{ color: "var(--arclo-accent, #1a1a1a)" }}>{"<"}{c.name}{" />"}</span>
               </h3>
               <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--docs-body)" }}>
                 {c.description}
               </p>
             </Link>
           ))}
-        </div>
+        </AnimateOnScroll>
       </section>
 
       {/* Footer */}
@@ -189,7 +200,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-5xl items-center justify-between text-sm" style={{ color: "var(--docs-muted)" }}>
           <div className="flex items-baseline gap-0.5">
             <span className="font-semibold" style={{ color: "var(--docs-body)" }}>arc</span>
-            <span className="font-semibold" style={{ color: "var(--arclo-accent, #6C5CE7)", opacity: 0.6 }}>lo</span>
+            <span className="font-semibold" style={{ color: "var(--arclo-accent, #1a1a1a)", opacity: 0.6 }}>lo</span>
           </div>
           <p>AI-native design system</p>
         </div>

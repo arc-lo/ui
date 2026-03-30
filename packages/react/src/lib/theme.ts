@@ -46,6 +46,7 @@
  */
 export const themeVars = {
   accent: "var(--arclo-accent, #6C5CE7)",
+  accentFg: "var(--arclo-accent-fg, #ffffff)",
   accentHover: "var(--arclo-accent-hover, #5A4BD1)",
   accentBright: "var(--arclo-accent-bright, rgb(167,139,250))",
   surface: "var(--arclo-surface, #ffffff)",

@@ -6,11 +6,15 @@ export function ThemeToggle() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
-    // Check initial preference
     const stored = localStorage.getItem("arclo-theme");
     if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
       setDark(true);
       document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      setDark(false);
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
     }
   }, []);
 
@@ -18,6 +22,7 @@ export function ThemeToggle() {
     setDark((d) => {
       const next = !d;
       document.documentElement.classList.toggle("dark", next);
+      document.documentElement.classList.toggle("light", !next);
       localStorage.setItem("arclo-theme", next ? "dark" : "light");
       return next;
     });

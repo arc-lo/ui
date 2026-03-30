@@ -2,6 +2,7 @@
 
 import { forwardRef, useCallback, useState, type HTMLAttributes } from "react";
 import { cn } from "../lib/cn";
+import { themeVars } from "../lib/theme";
 
 /* ─── CodeBlock ──────────────────────────────────────────────────── */
 
@@ -50,24 +51,34 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(
           "arclo-code-block overflow-hidden rounded-xl border",
           className,
         )}
-        style={{ backgroundColor: "#1e1e2e", borderColor: "#313244" }}
+        style={{
+          backgroundColor: themeVars.surfaceSecondary,
+          borderColor: themeVars.border,
+        }}
         {...props}
       >
         {/* Header bar */}
-        <div className="flex items-center justify-between px-4 py-2" style={{ borderBottom: "1px solid #313244" }}>
-          <span className="text-[11px] font-medium uppercase tracking-wider" style={{ color: "#a6adc8" }}>
+        <div
+          className="flex items-center justify-between px-4 py-2"
+          style={{ borderBottom: `1px solid ${themeVars.border}` }}
+        >
+          <span
+            className="text-[11px] font-medium uppercase tracking-wider"
+            style={{ color: themeVars.textMuted }}
+          >
             {language ?? "code"}
           </span>
           <button
             type="button"
             onClick={handleCopy}
             className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] transition-colors cursor-pointer"
-            style={{ color: "#a6adc8" }}
+            style={{ color: themeVars.textMuted }}
           >
             {copied ? (
               <>
                 <svg
-                  className="h-3.5 w-3.5 text-emerald-400"
+                  className="h-3.5 w-3.5"
+                  style={{ color: "#10b981" }}
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -100,13 +111,22 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(
         </div>
 
         {/* Code area */}
-        <div className="overflow-auto [scrollbar-width:thin] [scrollbar-color:theme(colors.gray.700)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-700" style={{ maxHeight }}>
+        <div
+          className="overflow-auto [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full"
+          style={{
+            maxHeight,
+            scrollbarColor: `${themeVars.border} transparent`,
+          }}
+        >
           <pre className="p-4 text-[13px] leading-relaxed">
-            <code className="font-mono" style={{ color: "#cdd6f4" }}>
+            <code className="font-mono" style={{ color: themeVars.text }}>
               {lines.map((line, i) => (
                 <div key={i} className="flex">
                   {showLineNumbers && (
-                    <span className="mr-4 inline-block w-8 shrink-0 select-none text-right" style={{ color: "#585b70" }}>
+                    <span
+                      className="mr-4 inline-block w-8 shrink-0 select-none text-right"
+                      style={{ color: themeVars.textMuted }}
+                    >
                       {i + 1}
                     </span>
                   )}

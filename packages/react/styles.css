@@ -4,13 +4,18 @@
  * Usage:
  *   @import "tailwindcss";
  *   @import "@arc-lo/ui/styles.css";
+ *
+ * Themes: add a data-theme attribute to switch accent colors.
+ *   <html data-theme="violet">
+ *   Available: noir (default), violet, ocean, forest, sunset, rose
  */
 
-/* ─── Light theme (default) ───────────────────────────────────────── */
+/* ─── Light theme (default — noir) ────────────────────────────────── */
 :root {
-  --arclo-accent: #6C5CE7;
-  --arclo-accent-hover: #5A4BD1;
-  --arclo-accent-bright: rgb(167, 139, 250);
+  --arclo-accent: #1a1a1a;
+  --arclo-accent-hover: #333333;
+  --arclo-accent-bright: #555555;
+  --arclo-accent-fg: #ffffff;
   --arclo-surface: #ffffff;
   --arclo-surface-secondary: #f9fafb;
   --arclo-border: #e5e7eb;
@@ -25,14 +30,47 @@
   --arclo-hover-bg: rgba(0, 0, 0, 0.06);
 }
 
-/* ─── Dark theme (prefers-color-scheme) ───────────────────────────── */
+/* ─── Color themes (light mode accents) ───────────────────────────── */
+[data-theme="violet"] {
+  --arclo-accent: #6C5CE7;
+  --arclo-accent-hover: #5A4BD1;
+  --arclo-accent-bright: #a78bfa;
+  --arclo-accent-fg: #ffffff;
+}
+
+[data-theme="ocean"] {
+  --arclo-accent: #0ea5e9;
+  --arclo-accent-hover: #0284c7;
+  --arclo-accent-bright: #38bdf8;
+  --arclo-accent-fg: #ffffff;
+}
+
+[data-theme="forest"] {
+  --arclo-accent: #10b981;
+  --arclo-accent-hover: #059669;
+  --arclo-accent-bright: #34d399;
+  --arclo-accent-fg: #ffffff;
+}
+
+[data-theme="sunset"] {
+  --arclo-accent: #f97316;
+  --arclo-accent-hover: #ea580c;
+  --arclo-accent-bright: #fb923c;
+  --arclo-accent-fg: #ffffff;
+}
+
+[data-theme="rose"] {
+  --arclo-accent: #f43f5e;
+  --arclo-accent-hover: #e11d48;
+  --arclo-accent-bright: #fb7185;
+  --arclo-accent-fg: #ffffff;
+}
+
+/* ─── Dark mode surfaces (prefers-color-scheme) ───────────────────── */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    --arclo-accent: #a78bfa;
-    --arclo-accent-hover: #8b6ff7;
-    --arclo-accent-bright: rgb(196, 181, 253);
-    --arclo-surface: #1a1a2e;
-    --arclo-surface-secondary: #16213e;
+    --arclo-surface: #0f0f1a;
+    --arclo-surface-secondary: #1a1a2e;
     --arclo-border: #2d2d44;
     --arclo-text: #e2e8f0;
     --arclo-text-secondary: #94a3b8;
@@ -45,13 +83,10 @@
   }
 }
 
-/* ─── Dark theme (class-based) ────────────────────────────────────── */
+/* ─── Dark mode surfaces (class-based) ────────────────────────────── */
 .dark {
-  --arclo-accent: #a78bfa;
-  --arclo-accent-hover: #8b6ff7;
-  --arclo-accent-bright: rgb(196, 181, 253);
-  --arclo-surface: #1a1a2e;
-  --arclo-surface-secondary: #16213e;
+  --arclo-surface: #0f0f1a;
+  --arclo-surface-secondary: #1a1a2e;
   --arclo-border: #2d2d44;
   --arclo-text: #e2e8f0;
   --arclo-text-secondary: #94a3b8;
@@ -63,6 +98,111 @@
   --arclo-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
+/* ─── Dark mode accent overrides per theme ────────────────────────── */
+/* Noir dark: white accent with dark text */
+.dark:not([data-theme]),
+.dark[data-theme="noir"] {
+  --arclo-accent: #ffffff;
+  --arclo-accent-hover: #e2e8f0;
+  --arclo-accent-bright: #f1f5f9;
+  --arclo-accent-fg: #0f0f1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not([data-theme]),
+  :root:not(.light)[data-theme="noir"] {
+    --arclo-accent: #ffffff;
+    --arclo-accent-hover: #e2e8f0;
+    --arclo-accent-bright: #f1f5f9;
+    --arclo-accent-fg: #0f0f1a;
+  }
+}
+
+/* Violet dark */
+.dark[data-theme="violet"] {
+  --arclo-accent: #a78bfa;
+  --arclo-accent-hover: #8b6ff7;
+  --arclo-accent-bright: #c4b5fd;
+  --arclo-accent-fg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light)[data-theme="violet"] {
+    --arclo-accent: #a78bfa;
+    --arclo-accent-hover: #8b6ff7;
+    --arclo-accent-bright: #c4b5fd;
+    --arclo-accent-fg: #ffffff;
+  }
+}
+
+/* Ocean dark */
+.dark[data-theme="ocean"] {
+  --arclo-accent: #38bdf8;
+  --arclo-accent-hover: #7dd3fc;
+  --arclo-accent-bright: #bae6fd;
+  --arclo-accent-fg: #0f0f1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light)[data-theme="ocean"] {
+    --arclo-accent: #38bdf8;
+    --arclo-accent-hover: #7dd3fc;
+    --arclo-accent-bright: #bae6fd;
+    --arclo-accent-fg: #0f0f1a;
+  }
+}
+
+/* Forest dark */
+.dark[data-theme="forest"] {
+  --arclo-accent: #34d399;
+  --arclo-accent-hover: #6ee7b7;
+  --arclo-accent-bright: #a7f3d0;
+  --arclo-accent-fg: #0f0f1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light)[data-theme="forest"] {
+    --arclo-accent: #34d399;
+    --arclo-accent-hover: #6ee7b7;
+    --arclo-accent-bright: #a7f3d0;
+    --arclo-accent-fg: #0f0f1a;
+  }
+}
+
+/* Sunset dark */
+.dark[data-theme="sunset"] {
+  --arclo-accent: #fb923c;
+  --arclo-accent-hover: #fdba74;
+  --arclo-accent-bright: #fed7aa;
+  --arclo-accent-fg: #0f0f1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light)[data-theme="sunset"] {
+    --arclo-accent: #fb923c;
+    --arclo-accent-hover: #fdba74;
+    --arclo-accent-bright: #fed7aa;
+    --arclo-accent-fg: #0f0f1a;
+  }
+}
+
+/* Rose dark */
+.dark[data-theme="rose"] {
+  --arclo-accent: #fb7185;
+  --arclo-accent-hover: #fda4af;
+  --arclo-accent-bright: #fecdd3;
+  --arclo-accent-fg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light)[data-theme="rose"] {
+    --arclo-accent: #fb7185;
+    --arclo-accent-hover: #fda4af;
+    --arclo-accent-bright: #fecdd3;
+    --arclo-accent-fg: #ffffff;
+  }
+}
+
 /* ─── Component styles ────────────────────────────────────────────── */
 .arclo-feedback-btn:hover {
   background-color: var(--arclo-hover-bg, rgba(0, 0, 0, 0.06));
@@ -70,6 +210,27 @@
 
 .arclo-feedback-btn:not([aria-pressed="true"]):hover {
   color: var(--arclo-text-secondary, #6b7280);
+}
+
+.arclo-prompt-input::-webkit-scrollbar {
+  display: none;
+}
+
+.arclo-prompt-input::placeholder {
+  color: var(--arclo-text-muted, #9ca3af);
+}
+
+.arclo-chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.arclo-chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.arclo-chat-messages::-webkit-scrollbar-thumb {
+  background-color: var(--arclo-border, #e5e7eb);
+  border-radius: 3px;
 }
 
 /* ─── Tailwind utility scanning ───────────────────────────────────── */

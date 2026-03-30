@@ -39,9 +39,13 @@ export const Messages = forwardRef<HTMLDivElement, ChatThreadMessagesProps>(
       <div
         ref={ref}
         className={cn(
-          "arclo-chat-messages flex-1 overflow-y-auto space-y-4 p-4 [scrollbar-width:thin] [scrollbar-color:theme(colors.gray.300)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300",
+          "arclo-chat-messages flex-1 overflow-y-auto space-y-4 p-4",
           className,
         )}
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: `var(--arclo-border, #e5e7eb) transparent`,
+        }}
         {...props}
       >
         {children}
@@ -141,10 +145,10 @@ export const Message = forwardRef<HTMLDivElement, ChatThreadMessageProps>(
               isUser
                 ? {
                     backgroundColor: themeVars.accent,
-                    color: "#ffffff",
+                    color: themeVars.accentFg,
                   }
                 : {
-                    backgroundColor: themeVars.surfaceSecondary,
+                    backgroundColor: themeVars.surface,
                     color: themeVars.text,
                     border: `1px solid ${themeVars.border}`,
                   }
@@ -211,8 +215,16 @@ export const ScrollAnchor = forwardRef<HTMLDivElement, ChatThreadScrollAnchorPro
       const el = innerRef.current;
       if (!el) return;
 
+      // Find the scrollable parent (the Messages container)
+      const scrollParent = el.closest(".arclo-chat-messages");
+
       const observer = new MutationObserver(() => {
-        el.scrollIntoView({ behavior: "smooth", block: "end" });
+        if (scrollParent) {
+          scrollParent.scrollTo({
+            top: scrollParent.scrollHeight,
+            behavior: "smooth",
+          });
+        }
       });
 
       const parent = el.parentElement;

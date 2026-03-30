@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CodeBlock } from "@/components/code-block";
 import { InfoTable } from "@/components/props-table";
 
@@ -83,52 +84,10 @@ function ChatMessage({ stream, thinkingState }) {
           chain-of-thought reasoning and tool invocations out of the box.
         </li>
         <li>
-          <strong>Themeable</strong> — CSS custom properties for colors,
-          surfaces, and borders. Supports light and dark mode.
+          <strong><Link href="/docs/theming">Themeable</Link></strong> — CSS custom properties for colors,
+          surfaces, and borders. 6 built-in color themes. Supports light and dark mode.
         </li>
       </ul>
-
-      <h2>Theming</h2>
-      <p>
-        Override CSS custom properties to match your brand. All accent colors,
-        surfaces, and borders are customizable. Import the theme preset for
-        automatic dark mode support:
-      </p>
-      <CodeBlock
-        lang="css"
-        code={`/* Option 1: Import the preset (includes light + dark mode) */
-@import "@arc-lo/ui/theme.css";
-
-/* Option 2: Set variables manually */
-:root {
-  --arclo-accent: #6C5CE7;
-  --arclo-accent-hover: #5A4BD1;
-  --arclo-surface: #ffffff;
-  --arclo-surface-secondary: #f9fafb;
-  --arclo-border: #e5e7eb;
-  --arclo-text: #1a1a1a;
-  --arclo-text-secondary: #6b7280;
-  --arclo-text-muted: #9ca3af;
-  --arclo-error: #ef4444;
-  --arclo-error-surface: #fef2f2;
-  --arclo-warning: #f59e0b;
-  --arclo-warning-surface: #fffbeb;
-  --arclo-radius: 0.75rem;
-}
-
-/* Dark mode — via class or media query */
-.dark {
-  --arclo-accent: #a78bfa;
-  --arclo-surface: #1a1a2e;
-  --arclo-surface-secondary: #16213e;
-  --arclo-border: #2d2d44;
-  --arclo-text: #e2e8f0;
-  --arclo-text-secondary: #94a3b8;
-  --arclo-text-muted: #64748b;
-  --arclo-error: #f87171;
-  --arclo-error-surface: #451a1a;
-}`}
-      />
 
       <h2>Components</h2>
       <h3>Streaming &amp; rendering</h3>

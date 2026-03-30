@@ -162,9 +162,13 @@ export const Chip = forwardRef<HTMLSpanElement, PromptBoxChipProps>(
       <span
         ref={ref}
         className={cn(
-          "arclo-prompt-chip inline-flex items-center gap-1.5 rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600",
+          "arclo-prompt-chip inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium",
           className,
         )}
+        style={{
+          backgroundColor: themeVars.surfaceSecondary,
+          color: themeVars.textSecondary,
+        }}
         {...props}
       >
         {children}
@@ -235,8 +239,12 @@ export const Input = forwardRef<HTMLTextAreaElement, PromptBoxInputProps>(
         disabled={disabled || isSubmitting}
         rows={minRows}
         placeholder="Ask anything..."
+        style={{
+          scrollbarWidth: "none",
+          color: themeVars.text,
+        }}
         className={cn(
-          "arclo-prompt-input w-full resize-none bg-transparent px-4 py-3 text-[15px] leading-relaxed outline-none placeholder:text-gray-400 [scrollbar-width:thin] [scrollbar-color:theme(colors.gray.300)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300",
+          "arclo-prompt-input w-full resize-none bg-transparent px-4 py-3 text-[15px] leading-relaxed outline-none",
           className,
         )}
         {...props}
@@ -283,9 +291,9 @@ export const SubmitButton = forwardRef<HTMLButtonElement, PromptBoxSubmitProps>(
         ref={ref}
         type="submit"
         disabled={isEmpty || isSubmitting || disabled}
-        style={{ backgroundColor: themeVars.accent }}
+        style={{ backgroundColor: themeVars.accent, color: themeVars.accentFg }}
         className={cn(
-          "arclo-prompt-submit ml-auto rounded-xl px-4 py-2 text-sm font-medium text-white transition-all hover:brightness-90 disabled:opacity-25 cursor-pointer disabled:cursor-default",
+          "arclo-prompt-submit ml-auto rounded-xl px-4 py-2 text-sm font-medium transition-all hover:brightness-90 disabled:opacity-25 cursor-pointer disabled:cursor-default",
           className,
         )}
         {...props}
