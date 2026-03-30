@@ -82,8 +82,12 @@ Root.displayName = "FeedbackBar.Root";
 
 /* ─── Shared button style ─────────────────────────────────────────── */
 
-const btnClass =
-  "arclo-feedback-btn inline-flex items-center justify-center rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 cursor-pointer";
+const btnBase =
+  "arclo-feedback-btn inline-flex items-center justify-center rounded-md p-1.5 transition-colors cursor-pointer";
+
+const btnStyle = {
+  color: themeVars.textMuted,
+} as const;
 
 /* ─── ThumbsUp ────────────────────────────────────────────────────── */
 
@@ -102,8 +106,8 @@ export const ThumbsUp = forwardRef<HTMLButtonElement, FeedbackBarThumbsUpProps>(
         aria-label="Good response"
         aria-pressed={active}
         onClick={() => setFeedback(active ? null : "up")}
-        style={active ? { color: themeVars.accent } : undefined}
-        className={cn(btnClass, className)}
+        style={active ? { color: themeVars.accent } : btnStyle}
+        className={cn(btnBase, className)}
         {...props}
       >
         <svg
@@ -112,7 +116,7 @@ export const ThumbsUp = forwardRef<HTMLButtonElement, FeedbackBarThumbsUpProps>(
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth={active ? "2.5" : "2"}
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -144,7 +148,8 @@ export const ThumbsDown = forwardRef<
       aria-label="Bad response"
       aria-pressed={active}
       onClick={() => setFeedback(active ? null : "down")}
-      className={cn(btnClass, active && "text-red-500", className)}
+      style={active ? { color: themeVars.error } : btnStyle}
+      className={cn(btnBase, className)}
       {...props}
     >
       <svg
@@ -153,7 +158,7 @@ export const ThumbsDown = forwardRef<
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth={active ? "2.5" : "2"}
         strokeLinecap="round"
         strokeLinejoin="round"
       >
@@ -195,7 +200,8 @@ export const Copy = forwardRef<HTMLButtonElement, FeedbackBarCopyProps>(
         type="button"
         aria-label={copied ? "Copied" : "Copy"}
         onClick={handleCopy}
-        className={cn(btnClass, copied && "text-emerald-600", className)}
+        style={copied ? { color: "#10b981" } : btnStyle}
+        className={cn(btnBase, className)}
         {...props}
       >
         {copied ? (
@@ -249,7 +255,8 @@ export const Regenerate = forwardRef<
       type="button"
       aria-label="Regenerate response"
       onClick={onRegenerate}
-      className={cn(btnClass, className)}
+      style={btnStyle}
+      className={cn(btnBase, className)}
       {...props}
     >
       <svg

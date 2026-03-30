@@ -143,10 +143,12 @@ export function StreamingTextStatesDemo() {
                 The transformer architecture revolutionized natural language
                 processing by introducing self-attention mechanisms.
               </p>
-              <div className="mt-3 flex gap-1">
-                <span className="rounded-md p-1.5 text-gray-400 hover:bg-gray-100 cursor-pointer text-xs">👍</span>
-                <span className="rounded-md p-1.5 text-gray-400 hover:bg-gray-100 cursor-pointer text-xs">👎</span>
-                <span className="rounded-md p-1.5 text-gray-400 hover:bg-gray-100 cursor-pointer text-xs">📋</span>
+              <div className="mt-3">
+                <FeedbackBar.Root onFeedback={(v) => console.log("Feedback:", v)}>
+                  <FeedbackBar.ThumbsUp />
+                  <FeedbackBar.ThumbsDown />
+                  <FeedbackBar.Copy />
+                </FeedbackBar.Root>
               </div>
             </div>
           )}

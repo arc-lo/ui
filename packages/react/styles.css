@@ -1,6 +1,12 @@
-/* arclo theme — import this file for automatic light/dark mode support */
-/* Usage: @import "@arc-lo/ui/styles/theme.css"; */
+/*
+ * @arc-lo/ui — styles
+ *
+ * Usage:
+ *   @import "tailwindcss";
+ *   @import "@arc-lo/ui/styles.css";
+ */
 
+/* ─── Light theme (default) ───────────────────────────────────────── */
 :root {
   --arclo-accent: #6C5CE7;
   --arclo-accent-hover: #5A4BD1;
@@ -18,6 +24,7 @@
   --arclo-radius: 0.75rem;
 }
 
+/* ─── Dark theme (prefers-color-scheme) ───────────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
     --arclo-accent: #a78bfa;
@@ -36,7 +43,7 @@
   }
 }
 
-/* Class-based dark mode — add class="dark" to html or a parent */
+/* ─── Dark theme (class-based) ────────────────────────────────────── */
 .dark {
   --arclo-accent: #a78bfa;
   --arclo-accent-hover: #8b6ff7;
@@ -52,3 +59,12 @@
   --arclo-warning: #fbbf24;
   --arclo-warning-surface: #452a1a;
 }
+
+/* ─── Component styles ────────────────────────────────────────────── */
+.arclo-feedback-btn:hover {
+  background-color: var(--arclo-surface-secondary, #f9fafb);
+  color: var(--arclo-text-secondary, #6b7280);
+}
+
+/* ─── Tailwind utility scanning ───────────────────────────────────── */
+@source "./dist";

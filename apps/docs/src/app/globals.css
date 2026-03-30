@@ -1,19 +1,8 @@
 @import "tailwindcss";
-
-/* Scan @arc-lo/ui source so Tailwind includes its color classes */
-@source "../../../../packages/react/src";
+@import "@arc-lo/ui/styles.css";
 
 /* ─── Light theme (default) ───────────────────────────────────────── */
 :root {
-  --arclo-accent: #6C5CE7;
-  --arclo-accent-hover: #5A4BD1;
-  --arclo-surface: #ffffff;
-  --arclo-surface-secondary: #f9fafb;
-  --arclo-border: #e5e7eb;
-  --arclo-text: #111111;
-  --arclo-text-secondary: #4b5563;
-  --arclo-text-muted: #9ca3af;
-
   --docs-bg: #ffffff;
   --docs-nav-bg: #ffffff;
   --docs-sidebar-border: #f3f4f6;
@@ -33,15 +22,6 @@
 
 /* ─── Dark theme ──────────────────────────────────────────────────── */
 .dark {
-  --arclo-accent: #a78bfa;
-  --arclo-accent-hover: #8b6ff7;
-  --arclo-surface: #0f0f1a;
-  --arclo-surface-secondary: #1a1a2e;
-  --arclo-border: #2d2d44;
-  --arclo-text: #e2e8f0;
-  --arclo-text-secondary: #94a3b8;
-  --arclo-text-muted: #64748b;
-
   --docs-bg: #0a0a14;
   --docs-nav-bg: #0f0f1a;
   --docs-sidebar-border: #1e1e32;

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "../components/theme-toggle";
 
 const components = [
   {
@@ -116,6 +117,7 @@ export default function Home() {
             >
               GitHub
             </a>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
